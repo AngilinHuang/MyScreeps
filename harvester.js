@@ -10,7 +10,9 @@ var roleHarvester = {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION 
                         		|| structure.structureType == STRUCTURE_SPAWN
-                        		|| structure.structureType == STRUCTURE_TOWER) &&
+                        		|| structure.structureType == STRUCTURE_TOWER
+                        		|| structure.structureType == STRUCTURE_STORAGE
+                        		|| structure.structureType == STRUCTURE_CONTAINER) &&
                             structure.energy < structure.energyCapacity;
                     }
             });
@@ -20,7 +22,9 @@ var roleHarvester = {
                 }
             }
             else{
-            	creepUtil.concentrateToFlag(creep, COLOR_WHITE);
+            	if(!creepUtil.tryToUpgrade(creep)){
+        			creepUtil.concentrateToFlag(creep, COLOR_WHITE);
+            	}
             }
         }
     }

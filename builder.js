@@ -11,16 +11,13 @@ var roleBuilder = {
         }
 
         if(creep.memory.building) {
-        	//从最近的建造点开始建造
-            var target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-            if(target) {
-                if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                }
-            }
-            else{
-            	creepUtil.concentrateToFlag(creep, COLOR_WHITE);
-            }
+        	if(!creepUtil.tryToBuild(creep)){
+        		if(!creepUtil.tryToRepair(creep)){
+	        		if(!creepUtil.tryToUpgrade(creep)){
+	        			creepUtil.concentrateToFlag(creep, COLOR_WHITE);
+	            	}
+        		}
+        	}
         }
         else {
         	creepUtil.harvestClosestEnergy(creep);
