@@ -19,13 +19,12 @@ var autoCreateCreeps = {
     		let room = Game.rooms[name];
     		let spawns = room.find(FIND_MY_SPAWNS);
     		if(spawns.length>0){
-    			//计算当前房间资源量
+    			//计算当前房间每300tick的能量总和
     			let energyCapacity = 0;
-    			let resources = Game.rooms["W15S18"].find(FIND_SOURCES);
+    			let resources = room.find(FIND_SOURCES);
     			for(let i=0;i<resources.length;i++){
-    				energyCapacity += resource[i].energyCapacity;
+    				energyCapacity += resources[i].energyCapacity;
     			}
-    			console.log(room.name +" has "+energyCapacity+" energy");
     			
     			let harvesterCount = defaultHarvesterCount;
     			let upgraderCount = defaultUpgraderCount;
@@ -37,6 +36,9 @@ var autoCreateCreeps = {
     			}
     			else if(room.controller.level==2){
     				repairCount = repairCount-1;
+    			}
+    			else if(room.controller.level==8){
+    				upgraderCount = 1;
     			}
     			else if(resources.length==1){
     				upgraderCount = upgraderCount-2;
@@ -99,7 +101,7 @@ var autoCreateCreeps = {
     	            return;
     	        }
     	        
-    	        if(spawn.spawning) {
+    	        if(spawns[0].spawning) {
     	            var spawningCreep = Game.creeps[spawns[0].spawning.name];
     	            room.visual.text(
     	                spawningCreep.memory.role,

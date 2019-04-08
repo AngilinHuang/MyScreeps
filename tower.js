@@ -7,7 +7,7 @@ var structureTower = {
                 return;
             }
             
-            const closestDamagedCreep = tower.pos.findClosestByRange(FIND_CREEPS, {
+            const closestDamagedCreep = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
                 filter: (creep) => creep.hits < creep.hitsMax
             });
             if(closestDamagedCreep) {

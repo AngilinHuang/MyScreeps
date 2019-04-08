@@ -1,7 +1,7 @@
 var creepUtil = {
 		
     concentrateToFlag: function(creep, flagColor) {
-        const flags = creep.room.find(FIND_FLAGS, {
+    	const flags = creep.room.find(FIND_FLAGS, {
             filter: (flag) => {return flag.color==flagColor;
             }
         });
@@ -33,7 +33,7 @@ var creepUtil = {
 	
 	harvestTombstone: function(creep){
 		const tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES);
-		if(tombstone){
+		if(tombstone && tombstone.store[RESOURCE_ENERGY]>0){
 			if(creep.withdraw(tombstone, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 			    creep.moveTo(tombstone);
 			}
@@ -69,7 +69,7 @@ var creepUtil = {
     
     tryToBuild: function(creep){
     	//从最近的建造点开始建造
-    	const target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    	var target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
         if(target) {
             if(creep.build(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -82,12 +82,11 @@ var creepUtil = {
     },
     
     getEnergyFromClosestStructure: function(creep){
-    	const targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+    	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_EXTENSION 
                 		|| structure.structureType == STRUCTURE_SPAWN
-                		|| structure.structureType == STRUCTURE_STORAGE
-                		|| structure.structureType == STRUCTURE_CONTAINER) &&
+                		|| structure.structureType == STRUCTURE_STORAGE) &&
                     structure.energy > 0;
             }
     	});
