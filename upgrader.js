@@ -3,6 +3,10 @@ var creepUtil = require('creepUtil');
 var roleUpgrader = {
 
     run: function(creep) {
+    	if(creepUtil.evadeHostiles(creep)){
+    		return;
+    	}
+    	
         if(creep.memory.upgrader && creep.carry.energy == 0) {
             creep.memory.upgrader = false;
         }
@@ -11,9 +15,7 @@ var roleUpgrader = {
         }
 
         if(creep.memory.upgrader) {
-        	if(!creepUtil.tryToUpgrade(creep)){
-        		creepUtil.concentrateToFlag(creep, COLOR_WHITE);
-            }
+        	creepUtil.tryToUpgrade(creep);
         }
         else {
         	creepUtil.harvestClosestEnergy(creep);

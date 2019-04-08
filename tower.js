@@ -1,17 +1,26 @@
 var structureTower = {
     run: function(tower) {
     	if(tower) {
-            var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            const closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
                 tower.attack(closestHostile);
+                return;
             }
             
-            /*var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => structure.hits < structure.hitsMax
+            const closestDamagedCreep = tower.pos.findClosestByRange(FIND_CREEPS, {
+                filter: (creep) => creep.hits < creep.hitsMax
             });
-            if(closestDamagedStructure) {
-                tower.repair(closestDamagedStructure);
-            }*/
+            if(closestDamagedCreep) {
+                tower.heal(closestDamagedCreep);
+            }
+            
+            //修理建筑的效率只有creep的1/5，把工作交给repairer
+            /*let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+	            filter: (structure) => structure.hits < structure.hitsMax
+	        });
+	        if(closestDamagedStructure) {
+	            tower.repair(closestDamagedStructure);
+	        }*/
         }
     }
 };

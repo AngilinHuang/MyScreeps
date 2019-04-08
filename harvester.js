@@ -2,17 +2,27 @@ var creepUtil = require('creepUtil');
 
 var roleHarvester = {
     run: function(creep) {
-        if(creep.carry.energy < creep.carryCapacity) {
+    	if(creepUtil.evadeHostiles(creep)){
+    		return;
+    	}
+    	
+    	if(creep.memory.opt && creep.carry.energy == 0) {
+            creep.memory.opt = false;
+        }
+        if(!creep.memory.opt && creep.carry.energy == creep.carryCapacity) {
+            creep.memory.opt = true;
+        }
+    	
+        if(!creep.memory.opt) {
             creepUtil.harvestClosestEnergy(creep);
         }
         else {
-            var targets = creep.room.find(FIND_STRUCTURES, {
+            const targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION 
                         		|| structure.structureType == STRUCTURE_SPAWN
                         		|| structure.structureType == STRUCTURE_TOWER
-                        		|| structure.structureType == STRUCTURE_STORAGE
-                        		|| structure.structureType == STRUCTURE_CONTAINER) &&
+                        		|| structure.structureType == STRUCTURE_STORAGE) &&
                             structure.energy < structure.energyCapacity;
                     }
             });
@@ -22,9 +32,7 @@ var roleHarvester = {
                 }
             }
             else{
-            	if(!creepUtil.tryToUpgrade(creep)){
-        			creepUtil.concentrateToFlag(creep, COLOR_WHITE);
-            	}
+            	creepUtil.tryToUpgrade(creep);
             }
         }
     }

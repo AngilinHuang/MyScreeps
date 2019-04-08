@@ -3,6 +3,10 @@ var creepUtil = require('creepUtil');
 var roleRepairer = {
 
     run: function(creep) {
+    	if(creepUtil.evadeHostiles(creep)){
+    		return;
+    	}
+    	
         if(creep.memory.repairing && creep.carry.energy == 0) {
             creep.memory.repairing = false;
         }
@@ -11,14 +15,14 @@ var roleRepairer = {
         }
 
         if(creep.memory.repairing) {
-            var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < structure.hitsMax});
+            const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < structure.hitsMax});
             if(target) {
                 if(creep.repair(target) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }
             else{
-            	creepUtil.concentrateToFlag(creep, COLOR_WHITE);
+            	creepUtil.tryToUpgrade(creep);
             }
         }
         else {

@@ -3,6 +3,10 @@ var creepUtil = require('creepUtil');
 var roleBuilder = {
 
     run: function(creep) {
+    	if(creepUtil.evadeHostiles(creep)){
+    		return;
+    	}
+    	
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
         }
@@ -12,15 +16,13 @@ var roleBuilder = {
 
         if(creep.memory.building) {
         	if(!creepUtil.tryToBuild(creep)){
-        		if(!creepUtil.tryToRepair(creep)){
-	        		if(!creepUtil.tryToUpgrade(creep)){
-	        			creepUtil.concentrateToFlag(creep, COLOR_WHITE);
-	            	}
-        		}
+        		creepUtil.tryToUpgrade(creep);
         	}
         }
         else {
-        	creepUtil.harvestClosestEnergy(creep);
+        	if(!creepUtil.harvestTombstone(creep)){
+        		creepUtil.harvestClosestEnergy(creep);
+        	}
         }
     }
 };
