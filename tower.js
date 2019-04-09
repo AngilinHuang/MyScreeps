@@ -1,3 +1,8 @@
+/**
+ * tower功能
+ * 1、优先攻击房间内距离最近的hostile creep
+ * 2、治疗房间内不满血的己方creep
+ */
 var structureTower = {
     run: function(tower) {
     	if(tower) {

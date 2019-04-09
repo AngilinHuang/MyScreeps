@@ -1,5 +1,14 @@
 var creepUtil = require('creepUtil');
 
+/*
+ * harvester功能
+ * 工作优先级
+ * 1、用能量填满房间内最近的spawn，extension，tower
+ * 2、用能量填满房间内最近的storage
+ * 采集优先级
+ * 1、从当前房间内最近的有能量的source采集
+ * 
+ */
 var roleHarvester = {
     run: function(creep) {
     	if(creepUtil.evadeHostiles(creep)){

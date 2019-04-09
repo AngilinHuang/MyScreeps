@@ -9,11 +9,13 @@ var autoCreateCreeps = {
     	const defaultBuilderCount = 1;
     	const defaultRepairCount = 1;
     	
-    	const defaultWorker = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
     	const worker300 = [WORK,WORK,CARRY,MOVE];//init | 2tick on road | 3tick on plain | 15tick on swamp
     	const worker450 = [WORK,WORK,WORK,CARRY,MOVE,MOVE];//lv2 with 3 extension | 6energy/tick | 1tick on road | 2tick on plain | 10tick on swamp
     	const worker550 = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];//lv2 with 5 extension | 8energy/tick | 2tick on road | 3tick on plain | 13tick on swamp
     	const worker700 = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE];//lv3 with 8 extension | 10energy/tick| 1tick on road | 2tick on plain | 10tick on swamp
+    	const builder650 = [WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE];
+    	const repairer650 = [WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE];
+    	
     	
     	for(let name in Game.rooms){
     		let room = Game.rooms[name];
@@ -54,15 +56,18 @@ var autoCreateCreeps = {
     			let builderTemplate = worker300;
     			if(room.energyCapacityAvailable>=700){
     				workerTemplate = worker700;
-    				builderTemplate = worker700;
+    				builderTemplate = builder650;
+    				repairerTemplate = repairer650;
     			}
     			else if(room.energyCapacityAvailable>=550){
     				workerTemplate = worker550;
     				builderTemplate = worker550;
+    				repairerTemplate = worker550;
     			}
     			else if(room.energyCapacityAvailable>=450){
     				workerTemplate = worker450;
     				builderTemplate = worker450;
+    				repairerTemplate = worker450;
     			}
     			
     			var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.room==room);
@@ -96,7 +101,7 @@ var autoCreateCreeps = {
     	        var repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer' && creep.room==room);
     	        if(repairers.length < repairCount) {
     	            var newName = 'Repairer' + Game.time;
-    	            spawns[0].spawnCreep(workerTemplate, newName,
+    	            spawns[0].spawnCreep(repairerTemplate, newName,
     	                {memory: {role: 'repairer'}});
     	            return;
     	        }

@@ -1,5 +1,16 @@
 var creepUtil = require('creepUtil');
 
+
+/*
+ * repairer功能
+ * 工作优先级
+ * 1、修理除了墙以外的不满血建筑
+ * 2、修理墙的血量到wallHitsLimit（最低100K，随着room controller等级的提高而提高）
+ * 3、升级当前房间的room controller
+ * 采集优先级
+ * 1、从当前房间内最近的有能量的source采集
+ * 
+ */
 var roleRepairer = {
 
     run: function(creep) {
