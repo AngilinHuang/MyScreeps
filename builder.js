@@ -15,13 +15,15 @@ var roleBuilder = {
         }
 
         if(creep.memory.building) {
-        	if(!creepUtil.tryToBuild(creep)){
-        		creepUtil.tryToUpgrade(creep);
+        	if(!creepUtil.transferEnergyToFunctionalStructure(creep)){
+        		if(!creepUtil.tryToBuild(creep)){
+            		creepUtil.tryToUpgrade(creep);
+            	}
         	}
         }
         else {
         	if(!creepUtil.harvestTombstone(creep)){
-        		creepUtil.harvestClosestEnergy(creep);
+        		creepUtil.harvestClosestStorageOrEnergy(creep);
         	}
         }
     }

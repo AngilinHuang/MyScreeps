@@ -5,15 +5,15 @@ var autoCreateCreeps = {
     create: function() {
     	
     	const defaultHarvesterCount = 2;
-    	const defaultUpgraderCount = 4;
-    	const defaultBuilderCount = 2;
+    	const defaultUpgraderCount = 3;
+    	const defaultBuilderCount = 1;
     	const defaultRepairCount = 1;
     	
     	const defaultWorker = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
-    	const worker300 = [WORK,WORK,CARRY,MOVE];//init | 1tick on road | 4tick on plain
-    	const worker450 = [WORK,WORK,WORK,CARRY,MOVE,MOVE];//lv2 with 3 extension | 6energy/tick | 1tick on road | 4tick on plain
-    	const worker550 = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];//lv2 with 5 extension | 8energy/tick | 1tick on road | 8tick on plain
-    	const builder750 = [WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];//lv3 with 9extension | long distance builder
+    	const worker300 = [WORK,WORK,CARRY,MOVE];//init | 2tick on road | 3tick on plain | 15tick on swamp
+    	const worker450 = [WORK,WORK,WORK,CARRY,MOVE,MOVE];//lv2 with 3 extension | 6energy/tick | 1tick on road | 2tick on plain | 10tick on swamp
+    	const worker550 = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];//lv2 with 5 extension | 8energy/tick | 2tick on road | 3tick on plain | 13tick on swamp
+    	const worker700 = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE];//lv3 with 8 extension | 10energy/tick| 1tick on road | 2tick on plain | 10tick on swamp
     	
     	for(let name in Game.rooms){
     		let room = Game.rooms[name];
@@ -52,9 +52,9 @@ var autoCreateCreeps = {
     			//根据当前room储存的资源存储最大上限，计算工人模板
     			let workerTemplate = worker300;
     			let builderTemplate = worker300;
-    			if(room.energyCapacityAvailable>=750){
-    				workerTemplate = worker550;
-    				builderTemplate = worker300;
+    			if(room.energyCapacityAvailable>=700){
+    				workerTemplate = worker700;
+    				builderTemplate = worker700;
     			}
     			else if(room.energyCapacityAvailable>=550){
     				workerTemplate = worker550;
