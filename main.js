@@ -4,6 +4,7 @@ var roleBuilder = require('builder');
 var structureTower = require('tower');
 var autoCreateCreeps = require('autoCreateCreeps');
 var roleRepairer = require('repairer');
+var structureLink = require('link');
 
 module.exports.loop = function () {
 
@@ -14,16 +15,16 @@ module.exports.loop = function () {
         }
     }
     
-    //for(let name in Game.rooms) {console.log(Game.rooms[name].energyAvailable)}  检查每个房间的可用能量
-    
     //structure工作
     for(let name in Game.structures) {
     	let structure = Game.structures[name];
         if(structure.structureType == STRUCTURE_TOWER) {
         	structureTower.run(structure);
         }
+        else if(structure.structureType == STRUCTURE_LINK){
+        	structureLink.run(structure);
+        }
     }
-
     
     //自动生产creep工人
     autoCreateCreeps.create();
