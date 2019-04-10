@@ -134,7 +134,7 @@ var creepUtil = {
     transferEnergyToFunctionalStructure: function(creep){
     	if(creep.room.memory.linkStorage){
 			const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
-			if(linkStorage && linkStorage.energy<600){
+			if(linkStorage && linkStorage.energy<450){
 				if(creep.transfer(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 		            creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
 		        }

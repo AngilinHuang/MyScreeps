@@ -12,7 +12,7 @@ var link = {
     		const linkTo = linkFrom.pos.findClosestByRange(FIND_STRUCTURES, {
 	            filter: (structure) => {
 	                return (structure.structureType == STRUCTURE_LINK &&
-	                    		structure.energy < 300)
+	                    		structure.energy < 400)
 	                    		;
 		            }
 		    });	
