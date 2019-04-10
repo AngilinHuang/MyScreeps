@@ -26,7 +26,9 @@ var roleUpgrader = {
         	creepUtil.tryToUpgrade(creep);
         }
         else {
-        	creepUtil.harvestClosestEnergy(creep);
+        	if(!creepUtil.getEnergyFromClosestStructure(creep)){
+        		creepUtil.harvestClosestEnergy(creep);
+        	}
         }
     }
 };

@@ -43,6 +43,43 @@ var creepUtil = {
 			}
 		}
 	},
+	getEnergyFromStorage: function(creep){
+		if(creep.room.memory.linkStorage && (creep.room.memory.linkFroms!=undefined && creep.room.memory.linkFroms.length>0)){
+			const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
+			if(linkStorage && linkStorage.energy>600){
+				if(creep.withdraw(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
+				}
+				return true;
+			}
+		}
+		else if(creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY]>0){
+			if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: '#ffffff'}});
+			}
+			return true;
+		}
+		return false;
+	},
+	getEnergyFromClosestStructure: function(creep){
+		const target = creep.pos.findInRange(FIND_STRUCTURES,4,{
+            filter: (structure) => {
+                return (structure.structureType == STRUCTURE_LINK && structure.energy >0)
+                     ||(structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
+                     ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
+                    ;
+	            }
+	    });
+		if(target && target.length>0){
+			if(creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(target[0], {visualizePathStyle: {stroke: '#ffffff'}});
+			}
+			return true;
+		}
+		else{
+			return false;
+		}
+	},
 	
 	harvestTombstone: function(creep){
 		const tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES);
@@ -95,12 +132,23 @@ var creepUtil = {
     },
     
     transferEnergyToFunctionalStructure: function(creep){
-    	let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+    	if(creep.room.memory.linkStorage){
+			const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
+			if(linkStorage && linkStorage.energy<600){
+				if(creep.transfer(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+		            creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
+		        }
+		        return true;
+			}
+		}
+    	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_EXTENSION 
-                		|| structure.structureType == STRUCTURE_SPAWN
-                		|| structure.structureType == STRUCTURE_TOWER) &&
-                    structure.energy < structure.energyCapacity;
+                return ((structure.structureType == STRUCTURE_EXTENSION 
+                		|| structure.structureType == STRUCTURE_SPAWN) &&
+                		structure.energy < structure.energyCapacity)
+                    || (structure.structureType == STRUCTURE_TOWER &&
+                    		structure.energy < 800)
+                    ;
 	            }
 	    });
 	    if(target) {
@@ -110,10 +158,10 @@ var creepUtil = {
 	        return true;
 	    }
 	    else{
+	    	
 	    	return false;
 	    }
     }
-
 
 };
 
