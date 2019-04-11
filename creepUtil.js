@@ -138,7 +138,7 @@ var creepUtil = {
 	
 	harvestNearbyTombstone: function(creep){
 		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 3);
-		if(tombstones.length>0){
+		if(tombstones.length>0 && tombstones[0].store[RESOURCE_ENERGY]>0){
 			if(creep.withdraw(tombstones[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 			    creep.moveTo(tombstones[0]);
 			}
