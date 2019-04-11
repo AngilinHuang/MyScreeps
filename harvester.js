@@ -14,6 +14,9 @@ var roleHarvester = {
     	if(creepUtil.evadeHostiles(creep)){
     		return;
     	}
+    	if(!creepUtil.checkRoom(creep)){
+    		return;
+    	}
     	
     	if(creep.memory.opt && creep.carry.energy == 0) {
             creep.memory.opt = false;
@@ -46,7 +49,7 @@ var roleHarvester = {
                             structure.energy < structure.energyCapacity)
                             || structure.structureType == STRUCTURE_STORAGE
                             || (structure.structureType == STRUCTURE_CONTAINER &&
-                            		_.sum(structure.store)<structure.storeCapicity);
+                            		_.sum(structure.store)<structure.storeCapacity);
                     }
         		});
         	}

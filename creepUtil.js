@@ -1,5 +1,17 @@
 var creepUtil = {
-		
+	
+	checkRoom: function(creep) {
+		const room = creep.memory.room;
+    	if(room){
+    		if(creep.room!=Game.rooms[room]){
+	    		const exitDir = creep.room.findExitTo(Game.rooms[room]);
+	        	const exit = creep.pos.findClosestByRange(exitDir);
+	        	creep.moveTo(exit);
+	    		return false;
+    		}
+    	}
+    	return true;
+    },
     concentrateToFlag: function(creep, flagColor) {
     	const flags = creep.room.find(FIND_FLAGS, {
             filter: (flag) => {return flag.color==flagColor;
@@ -26,6 +38,7 @@ var creepUtil = {
 
 	harvestClosestEnergy: function(creep){
 		const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE, {filter: (source) => source.energy>0});
+		//console.log(creep.name+' find source from '+source.id);
 		if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
 		    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
 		}
@@ -44,23 +57,39 @@ var creepUtil = {
 		}
 	},
 	getEnergyFromStorage: function(creep){
-		if(creep.room.memory.linkStorage && (creep.room.memory.linkFroms!=undefined && creep.room.memory.linkFroms.length>0)){
-			const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
-			if(linkStorage && linkStorage.energy>600){
-				if(creep.withdraw(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
+		const target = creep.pos.findInRange(FIND_STRUCTURES,4,{
+            filter: (structure) => {
+                return (structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
+                     ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
+                    ;
+	            }
+	    });
+		if(target && target.length>0){
+			if(creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(target[0], {visualizePathStyle: {stroke: '#ffffff'}});
+			}
+			return true;
+		}
+		else{
+			if(creep.room.memory.linkStorage && (creep.room.memory.linkFroms!=undefined && creep.room.memory.linkFroms.length>0)){
+				const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
+				if(linkStorage && linkStorage.energy>600){
+					if(creep.withdraw(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+						creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
+					}
+					return true;
+				}
+			}
+			else if(creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY]>0){
+				if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: '#ffffff'}});
 				}
 				return true;
 			}
 		}
-		else if(creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY]>0){
-			if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: '#ffffff'}});
-			}
-			return true;
-		}
 		return false;
 	},
+	
 	getEnergyFromClosestStructure: function(creep){
 		const target = creep.pos.findInRange(FIND_STRUCTURES,4,{
             filter: (structure) => {
@@ -71,6 +100,7 @@ var creepUtil = {
 	            }
 	    });
 		if(target && target.length>0){
+			//console.log(creep.name+' find energy from '+target.id);
 			if(creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target[0], {visualizePathStyle: {stroke: '#ffffff'}});
 			}
@@ -90,7 +120,19 @@ var creepUtil = {
 			return true;
 		}
 		else{
-			return false;
+			/*const dropedSource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+			//Game.getObjectById('5caeb0b40a0b387d36a6f7fc').pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+			//Game.getObjectById('5caeb0b40a0b387d36a6f7fc').withdraw(Game.getObjectById('5caeb0b40a0b387d36a6f7fc').pos.findClosestByRange(FIND_DROPPED_RESOURCES), RESOURCE_ENERGY)
+			报错-7，不能这么用，那看来drop资源只能用container捡了
+			if(dropedSource && dropedSource.energy>0){
+				if(creep.withdraw(dropedSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				    creep.moveTo(dropedSource);
+				}
+				return true;
+			}
+			else{*/
+				return false;
+			//}
 		}
 	},
     

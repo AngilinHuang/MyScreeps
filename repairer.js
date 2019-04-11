@@ -19,6 +19,9 @@ var roleRepairer = {
     	if(creepUtil.evadeHostiles(creep)){
     		return;
     	}
+    	if(!creepUtil.checkRoom(creep)){
+    		return;
+    	}
     	
         if(creep.memory.repairing && creep.carry.energy == 0) {
             creep.memory.repairing = false;
@@ -87,11 +90,12 @@ var roleRepairer = {
             }
         }
         else {
-        	if(!creepUtil.harvestTombstone(creep)){
+        	//builder很忙时取消注释
+        	//if(!creepUtil.harvestTombstone(creep)){
 	        	if(!creepUtil.getEnergyFromClosestStructure(creep)){
 	        		creepUtil.harvestClosestEnergy(creep);
 	        	}
-        	}
+        	//}
         }
     }
 };

@@ -14,6 +14,9 @@ var roleUpgrader = {
     	if(creepUtil.evadeHostiles(creep)){
     		return;
     	}
+    	if(!creepUtil.checkRoom(creep)){
+    		return;
+    	}
     	
         if(creep.memory.upgrader && creep.carry.energy == 0) {
             creep.memory.upgrader = false;

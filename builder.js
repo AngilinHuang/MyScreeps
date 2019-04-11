@@ -18,6 +18,9 @@ var roleBuilder = {
     	if(creepUtil.evadeHostiles(creep)){
     		return;
     	}
+    	if(!creepUtil.checkRoom(creep)){
+    		return;
+    	}
     	
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
@@ -34,8 +37,11 @@ var roleBuilder = {
         	}
         }
         else {
-        	if(!creepUtil.getEnergyFromStorage(creep)){
-        		creepUtil.harvestClosestEnergy(creep);
+        	//builder很忙时注释掉
+        	if(!creepUtil.harvestTombstone(creep)){
+	        	if(!creepUtil.getEnergyFromStorage(creep)){
+	        		creepUtil.harvestClosestEnergy(creep);
+	        	}
         	}
         }
     }

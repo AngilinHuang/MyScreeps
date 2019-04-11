@@ -5,6 +5,9 @@ var structureTower = require('tower');
 var autoCreateCreeps = require('autoCreateCreeps');
 var roleRepairer = require('repairer');
 var structureLink = require('link');
+var roleClaimer = require('claimer');
+//var roleCarrier = require('carrier');
+var roleOutsourcing = require('outsourcing');
 
 module.exports.loop = function () {
 
@@ -44,6 +47,15 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'repairer') {
             roleRepairer.run(creep);
+        }
+        if(creep.memory.role == 'claimer') {
+        	roleClaimer.run(creep);
+        }
+        /*if(creep.memory.role == 'carrier') {
+        	roleCarrier.run(creep);
+        }*/
+        if(creep.memory.role == 'outsourcing') {
+        	roleOutsourcing.run(creep);
         }
     }
 }
