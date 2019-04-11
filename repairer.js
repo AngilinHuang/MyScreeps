@@ -6,7 +6,8 @@ var creepUtil = require('creepUtil');
  * 工作优先级
  * 1、修理除了墙和rampart以外的血量不满70%的建筑到满血
  * 2、修理墙和rampart的血量到wallHitsLimit（最低100K，随着room controller等级的提高而提高）
- * 3、升级当前房间的room controller
+ * 3、为spawn，extension，tower供能
+ * 4、升级当前房间的room controller
  * 采集优先级
  * 1、如果房间内有tombstone存在且有能量，从tombstone采集能量
  * 2、从距离4格内的link、container、storage获取能量
@@ -53,7 +54,7 @@ var roleRepairer = {
         		const memoryTarget = Game.getObjectById(targetId);
         		if((memoryTarget.hits < memoryTarget.hitsMax
         			&& memoryTarget.structureType!=STRUCTURE_RAMPART)
-        			||(memoryTarget.hits < wallHitsLimit+10000
+        			||(memoryTarget.hits < (wallHitsLimit+10000)
         			&& memoryTarget.structureType==STRUCTURE_RAMPART)){
         			target = Game.getObjectById(targetId);
         		}
@@ -85,17 +86,18 @@ var roleRepairer = {
                     }
                 }
             	else{
-            		creepUtil.tryToUpgrade(creep);
+            		if(!creepUtil.transferEnergyToSpawnAndTower(creep)){
+            			creepUtil.tryToUpgrade(creep);
+            		}
             	}
             }
         }
         else {
-        	//builder很忙时取消注释
-        	//if(!creepUtil.harvestTombstone(creep)){
+        	if(!creepUtil.harvestTombstone(creep)){
 	        	if(!creepUtil.getEnergyFromClosestStructure(creep)){
 	        		creepUtil.harvestClosestEnergy(creep);
 	        	}
-        	//}
+        	}
         }
     }
 };

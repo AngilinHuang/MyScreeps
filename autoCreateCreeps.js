@@ -10,7 +10,7 @@ var autoCreateCreeps = {
     	const defaultRepairCount = 1;
     	
     	//使用outsourcing远程支持新占房间时，优先发送upgrader和builder，等到基建完成后再发送harvester
-    	let outsourcingSupport = {room:'W15S19',builderCount:2,upgraderCount:2,harvesterCount:1,repairCount:0};
+    	let outsourcingSupport = {room:'W15S19',builderCount:1,upgraderCount:3,harvesterCount:1,repairCount:0};
     	
     	//let carrierCount = 1;
     	
@@ -44,10 +44,16 @@ var autoCreateCreeps = {
     			let builderCount = defaultBuilderCount;
     			let repairCount = defaultRepairCount;
     			if(room.controller.level==1 || room.controller.level==2){
-    				harvesterCount = 2;
-    				upgraderCount = 2;
-    				builderCount = 1;
+    				harvesterCount = 0;
+    				upgraderCount = 0;
+    				builderCount = 0;
     				repairCount = 0;
+    			}
+    			else if(room.controller.level==3 || room.controller.level==4){
+    				harvesterCount = 0;
+    				upgraderCount = 0;
+    				builderCount = 0;
+    				repairCount = 1;
     			}
     			else if(room.controller.level==8){
     				upgraderCount = 0;
@@ -59,14 +65,14 @@ var autoCreateCreeps = {
     			let repairerTemplate = worker200;
     			let upgraderTemplate = worker200;
     			
-    			//1300到1800范围说明是5级，且此时已经造好link了，upgrader牺牲移动换工作效率
-    			if(room.energyCapacityAvailable>=1500){
+    			//5级满extension，且此时已经造好link了，upgrader牺牲移动换工作效率
+    			if(room.energyCapacityAvailable>=1800){
     				workerTemplate = worker1050;
     				builderTemplate = builder800;
     				repairerTemplate = builder800;
     				upgraderTemplate = upgrader1000;
     			}
-    			//4级
+    			//4级满extension
     			else if(room.energyCapacityAvailable>=1300){
     				workerTemplate = worker1050;
     				builderTemplate = builder800;
@@ -91,13 +97,25 @@ var autoCreateCreeps = {
     				upgraderTemplate = worker400;
     			}
     			
-    			var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.room==room);
-    	    	//复活用（因为能量会自动恢复到300）
-    			if(harvesters.length==0) {
-    				const newName = 'Harvester' + Game.time;
-    	            spawns[0].spawnCreep(worker300, newName,
-    	                {memory: {role: 'harvester', room:name}});
-    	            return;
+    			const harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.room==room);
+    			const builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder' && creep.room==room);
+    			const upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.room==room);
+    			const repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer' && creep.room==room);
+    	        
+    			//复活用（因为能量会自动恢复到300）
+    			if(harvesters.length==0 && builders.length==0 && upgraders.length==0 && repairers==0) {
+    				if(room.storage && room.storage.store[RESOURCE_ENERGY]>3000){
+    					const newName = 'Builder' + Game.time;
+        	            spawns[0].spawnCreep(worker200, newName,
+        	                {memory: {role: 'builder', room:name}});
+        	            return;
+    				}
+    				else{
+    					const newName = 'Harvester' + Game.time;
+        	            spawns[0].spawnCreep(worker300, newName,
+        	                {memory: {role: 'harvester', room:name}});
+        	            return;
+    				}
     	        }
     	    	else if(harvesters.length < harvesterCount) {
     	    		const newName = 'Harvester' + Game.time;
@@ -106,21 +124,18 @@ var autoCreateCreeps = {
     	            return;
     	        }
 
-    			const builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder' && creep.room==room);
-    	        if(builders.length < builderCount) {
+    			if(builders.length < builderCount) {
     	        	const newName = 'Builder' + Game.time;
     	            spawns[0].spawnCreep(builderTemplate, newName,
     	                {memory: {role: 'builder', room:name}});
     	            return;
     	        }
-    	        const upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.room==room);
     	        if(upgraders.length < upgraderCount) {
     	        	const newName = 'Upgrader' + Game.time;
     	            spawns[0].spawnCreep(upgraderTemplate, newName,
     	                {memory: {role: 'upgrader', room:name}});
     	            return;
     	        }
-    	        const repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer' && creep.room==room);
     	        if(repairers.length < repairCount) {
     	            const newName = 'Repairer' + Game.time;
     	            spawns[0].spawnCreep(repairerTemplate, newName,
@@ -142,7 +157,7 @@ var autoCreateCreeps = {
     	    	}
     	        if(outsourcingSupport && outsourcingSupport.harvesterCount>0 && outsourcingSupport.harvesterCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'harvester').length){
     	        	outsourcingSupport.harvesterCount=outsourcingSupport.harvesterCount-1;
-    	        	spawns[0].spawnCreep(worker1050,'OutsourcingHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'harvester', target: outsourcingSupport.room, room:outsourcingSupport.room } } );
+    	        	spawns[0].spawnCreep(worker700,'OutsourcingHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'harvester', target: outsourcingSupport.room, room:outsourcingSupport.room } } );
     	        	return;
     	    	}
     	        if(outsourcingSupport && outsourcingSupport.repairCount>0 && outsourcingSupport.repairCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'repairer').length){

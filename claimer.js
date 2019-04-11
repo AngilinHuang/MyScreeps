@@ -4,7 +4,7 @@ var creepUtil = require('creepUtil');
 /*
  * room claimer功能
  * 
- * Game.spawns['Spawn1'].spawnCreep( [CLAIM,CLAIM,MOVE,MOVE],'Claim1'+Game.time,{ memory: { role: 'claimer', target: 'W15S19',oper:'claim' } } );
+ * Game.spawns['Spawn1'].spawnCreep( [CLAIM,MOVE],'Claim1'+Game.time,{ memory: { role: 'claimer', target: 'W15S19',oper:'claim' } } );
  * 
  */
 var roleClaimer = {

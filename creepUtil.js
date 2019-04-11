@@ -24,7 +24,7 @@ var creepUtil = {
     
     //工作单位回避敌人
     evadeHostiles: function(creep){
-    	const hostiles = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 10);
+    	const hostiles = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6);
 	    if(hostiles.length > 0) {
 	    	const spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
 	    	if(spawn){
@@ -135,6 +135,19 @@ var creepUtil = {
 			//}
 		}
 	},
+	
+	harvestNearbyTombstone: function(creep){
+		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 3);
+		if(tombstones.length>0){
+			if(creep.withdraw(tombstones[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+			    creep.moveTo(tombstones[0]);
+			}
+			return true;
+		}
+		else{
+			return false;
+		}
+	},
     
     tryToRepair: function(creep){
     	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < structure.hitsMax});
@@ -174,15 +187,36 @@ var creepUtil = {
     },
     
     transferEnergyToFunctionalStructure: function(creep){
-    	if(creep.room.memory.linkStorage){
-			const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
-			if(linkStorage && linkStorage.energy<450){
-				if(creep.transfer(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-		            creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
-		        }
-		        return true;
+    	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return ((structure.structureType == STRUCTURE_EXTENSION 
+                		|| structure.structureType == STRUCTURE_SPAWN) &&
+                		structure.energy < structure.energyCapacity)
+                    || (structure.structureType == STRUCTURE_TOWER &&
+                    		structure.energy < 800)
+                    ;
+	            }
+	    });
+	    if(target) {
+	        if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+	            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+	        }
+	        return true;
+	    }
+	    else{
+	    	if(creep.room.memory.linkStorage){
+				const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
+				if(linkStorage && linkStorage.energy<450){
+					if(creep.transfer(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+			            creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
+			        }
+			        return true;
+				}
 			}
-		}
+	    	return false;
+	    }
+    },
+    transferEnergyToSpawnAndTower: function(creep){
     	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 return ((structure.structureType == STRUCTURE_EXTENSION 

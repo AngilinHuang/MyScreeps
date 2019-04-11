@@ -3,10 +3,11 @@ var creepUtil = require('creepUtil');
 /*
  * harvester功能
  * 工作优先级
- * 1、如果3格内有link或storage或container，将能量放入该建筑（container部分需要测试）
+ * 1、如果3格内有link或storage或container，将能量放入该建筑
  * 2、用能量填满房间内最近的spawn，extension，tower，storage
  * 采集优先级
- * 1、从当前房间内最近的有能量的source采集
+ * 1、从3格内有能量的tombstone获取能量
+ * 2、从当前房间内最近的有能量的source采集
  * 
  */
 var roleHarvester = {
@@ -26,7 +27,9 @@ var roleHarvester = {
         }
     	
         if(!creep.memory.opt) {
-            creepUtil.harvestClosestEnergy(creep);
+        	if(!creepUtil.harvestNearbyTombstone(creep)){
+        		creepUtil.harvestClosestEnergy(creep);
+        	}
         }
         else {
         	let target;
