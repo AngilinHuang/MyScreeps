@@ -97,10 +97,10 @@ var autoCreateCreeps = {
     				upgraderTemplate = worker400;
     			}
     			
-    			const harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.room==room);
-    			const builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder' && creep.room==room);
-    			const upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.room==room);
-    			const repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer' && creep.room==room);
+    			const harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.room==name);
+    			const builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder' && creep.memory.room==name);
+    			const upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.room==name);
+    			const repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer' && creep.memory.room==name);
     	        
     			//复活用（因为能量会自动恢复到300）
     			if(harvesters.length==0 && builders.length==0 && upgraders.length==0 && repairers==0) {
@@ -157,7 +157,7 @@ var autoCreateCreeps = {
     	    	}
     	        if(outsourcingSupport && outsourcingSupport.harvesterCount>0 && outsourcingSupport.harvesterCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'harvester').length){
     	        	outsourcingSupport.harvesterCount=outsourcingSupport.harvesterCount-1;
-    	        	spawns[0].spawnCreep(worker700,'OutsourcingHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'harvester', target: outsourcingSupport.room, room:outsourcingSupport.room } } );
+    	        	spawns[0].spawnCreep(upgrader800,'OutsourcingHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'harvester', target: outsourcingSupport.room, room:outsourcingSupport.room } } );
     	        	return;
     	    	}
     	        if(outsourcingSupport && outsourcingSupport.repairCount>0 && outsourcingSupport.repairCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'repairer').length){
