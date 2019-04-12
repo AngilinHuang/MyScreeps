@@ -10,7 +10,7 @@ var autoCreateCreeps = {
     	const defaultRepairCount = 1;
     	
     	//使用outsourcing远程支持新占房间时，优先发送upgrader和builder，等到基建完成后再发送harvester
-    	let outsourcingSupport = {room:'W15S19',builderCount:1,upgraderCount:3,harvesterCount:1,repairCount:0};
+    	let outsourcingSupport = {room:'W15S19',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0};
     	
     	//let carrierCount = 1;
     	
@@ -23,18 +23,18 @@ var autoCreateCreeps = {
     	const builder650 = [WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE];
     	const upgrader800 = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];//lv3 with 10 extension
     	const worker1050 = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
-    	const upgrader1000 = [WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE];
+    	const upgrader950 = [WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE];
     	const builder800 = [WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
     	//const carrier1200 = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
     	
     	
     	for(let name in Game.rooms){
-    		let room = Game.rooms[name];
-    		let spawns = room.find(FIND_MY_SPAWNS);
+    		const room = Game.rooms[name];
+    		const spawns = room.find(FIND_MY_SPAWNS);
     		if(spawns.length>0){
     			//计算当前房间每300tick的能量总和
     			let energyCapacity = 0;
-    			let resources = room.find(FIND_SOURCES);
+    			const resources = room.find(FIND_SOURCES);
     			for(let i=0;i<resources.length;i++){
     				energyCapacity += resources[i].energyCapacity;
     			}
@@ -50,9 +50,9 @@ var autoCreateCreeps = {
     				repairCount = 0;
     			}
     			else if(room.controller.level==3 || room.controller.level==4){
-    				harvesterCount = 0;
-    				upgraderCount = 0;
-    				builderCount = 0;
+    				harvesterCount = 2;
+    				upgraderCount = 2;
+    				builderCount = 1;
     				repairCount = 1;
     			}
     			else if(room.controller.level==8){
@@ -70,7 +70,7 @@ var autoCreateCreeps = {
     				workerTemplate = worker1050;
     				builderTemplate = builder800;
     				repairerTemplate = builder800;
-    				upgraderTemplate = upgrader1000;
+    				upgraderTemplate = upgrader950;
     			}
     			//4级满extension
     			else if(room.energyCapacityAvailable>=1300){
@@ -118,9 +118,26 @@ var autoCreateCreeps = {
     				}
     	        }
     	    	else if(harvesters.length < harvesterCount) {
+    	    		let sourceId;
+    	    		//控制器4级时，可以建造storage，且通过storage和container分别用一个采集者采集后放入容器，来避免其他单位采集能量点
+    	    		if(room.controller.level>=4){
+    	    			for(let i=0;i<resources.length;i++){
+    	    				let assignedResoureHarvester = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.room==name && creep.memory.sourceId == resources[i].id);
+    	    				if(assignedResoureHarvester.length < harvesterCount/resources.length){
+    	    					sourceId = resources[i].id;
+    	    					break;
+    	    				}
+    	    			}
+    	    		}
     	    		const newName = 'Harvester' + Game.time;
-    	            spawns[0].spawnCreep(workerTemplate, newName,
-    	                {memory: {role: 'harvester', room:name}});
+    	    		if(sourceId){
+    	    			spawns[0].spawnCreep(workerTemplate, newName,
+    	    	                {memory: {role: 'harvester', room:name, sourceId:sourceId}});
+    	    		}
+    	    		else{
+	    	            spawns[0].spawnCreep(workerTemplate, newName,
+	    	                {memory: {role: 'harvester', room:name}});
+    	    		}
     	            return;
     	        }
 

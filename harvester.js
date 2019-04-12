@@ -28,7 +28,21 @@ var roleHarvester = {
     	
         if(!creep.memory.opt) {
         	if(!creepUtil.harvestNearbyTombstone(creep)){
-        		creepUtil.harvestClosestEnergy(creep);
+        		if(creep.memory.sourceId){
+        			const source = Game.getObjectById(creep.memory.sourceId);
+        			if(source && source.energy>0){
+        				if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+        				    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+        				}
+        				return;
+        			}
+        			else{
+        				creepUtil.harvestClosestEnergy(creep);
+        			}
+        		}
+        		else{
+        			creepUtil.harvestClosestEnergy(creep);
+        		}
         	}
         }
         else {
