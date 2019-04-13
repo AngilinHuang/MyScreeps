@@ -46,12 +46,25 @@ var roleHarvester = {
         	}
         }
         else {
+        	//外包harvester需要自己修理container
+        	if(creep.memory.targetRole){
+        		const repaireContainer = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.hits < 0.4*structure.hitsMax && structure.structureType==STRUCTURE_CONTAINER});
+        		if(repaireContainer.length>0){
+        			if(creep.repair(repaireContainer[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(repaireContainer[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                    }
+            		return;
+        		}
+        	}
+        	
         	let target;
         	const targets = creep.pos.findInRange(FIND_STRUCTURES, 3, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_LINK &&
                         structure.energy < structure.energyCapacity)
-                        ||(structure.structureType == STRUCTURE_STORAGE);
+                        ||(structure.structureType == STRUCTURE_STORAGE)
+                        ||(structure.structureType == STRUCTURE_CONTAINER &&
+                            	_.sum(structure.store)<structure.storeCapacity);
                 }
         	});
         	if(targets && targets.length>0){
@@ -66,7 +79,9 @@ var roleHarvester = {
                             structure.energy < structure.energyCapacity)
                             || structure.structureType == STRUCTURE_STORAGE
                             || (structure.structureType == STRUCTURE_CONTAINER &&
-                            		_.sum(structure.store)<structure.storeCapacity);
+                            		_.sum(structure.store)<structure.storeCapacity)
+                            ||(structure.structureType == STRUCTURE_LINK &&
+                                    structure.energy < structure.energyCapacity);
                     }
         		});
         	}
