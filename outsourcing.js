@@ -23,8 +23,8 @@ var roleOutsourcing = {
     		const targetObj = creep.memory.targetObj;
     		const targetRole = creep.memory.targetRole;
         	if(targetRoom){
-        		if(creep.room!=Game.rooms[targetRoom]){
-    	    		const exitDir = creep.room.findExitTo(Game.rooms[targetRoom]);
+        		if(creep.room.name!=targetRoom){
+    	    		const exitDir = creep.room.findExitTo(targetRoom);
     	        	const exit = creep.pos.findClosestByRange(exitDir);
     	        	creep.moveTo(exit);
         		}
@@ -33,7 +33,6 @@ var roleOutsourcing = {
         				const target = Game.getObjectById(targetObj);
         				if(creep.pos.findInRange([target],4).length>0){
         					creep.memory.role = creep.memory.targetRole;
-                			creep.memory.target = undefined;
         				}
         				else{
         					creep.moveTo(target);
@@ -41,7 +40,6 @@ var roleOutsourcing = {
         			}
         			else{
         				creep.memory.role = creep.memory.targetRole;
-            			creep.memory.target = undefined;
         			}
         		}
         	}
