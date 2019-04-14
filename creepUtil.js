@@ -28,7 +28,7 @@ var creepUtil = {
     //工作单位回避敌人
     evadeHostiles: function(creep){
     	//当前房间遭到入侵后再进行计算
-    	if(creep.room.memory.threatLevel==undefined || (creep.room.memory.threatLevel!=undefined && creep.room.memory.threatLevel>0)){
+    	if(creep.room.memory.threatLevel!=undefined && creep.room.memory.threatLevel>0){
 	    	const hostiles = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6);
 		    if(hostiles.length > 0) {
 		    	const spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);

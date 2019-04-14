@@ -18,6 +18,20 @@ var roleClaimer = {
     	if(creepUtil.evadeHostiles(creep)){
     		return;
     	}
+    	
+    	const passThroughRoom = creep.memory.passThroughRoom;
+    	if(passThroughRoom){
+    		if(creep.room.name!=passThroughRoom){
+	    		const exitDir = creep.room.findExitTo(passThroughRoom);
+	        	const exit = creep.pos.findClosestByRange(exitDir);
+	        	creep.moveTo(exit);
+	    		return;
+    		}
+    		else{
+    			creep.memory.passThroughRoom = undefined;
+    		}
+    	}
+    	
     	const targetRoom = creep.memory.target;
     	if(targetRoom){
     		//注意，如果没有任何单位在另一个房间里，Game.rooms无法得到该房间，直接用findExitTo(targetRoomName)

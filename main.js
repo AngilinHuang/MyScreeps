@@ -8,6 +8,7 @@ var structureLink = require('link');
 var roleClaimer = require('claimer');
 var roleCarrier = require('carrier');
 var roleOutsourcing = require('outsourcing');
+var roleReserveHarvester = require('reserveHarvester');
 
 module.exports.loop = function () {
 
@@ -21,15 +22,13 @@ module.exports.loop = function () {
     //room管理
     for(let roomName in Game.rooms){
 		const room = Game.rooms[roomName];
-		if(room.controller.my){
-			//威胁系数，防御用，计算有多少敌对creep持续入侵该房间
-			const threatLevel = room.find(FIND_HOSTILE_CREEPS).length;
-			if(threatLevel==0 || !room.memory.threatLevel){
-				room.memory.threatLevel = threatLevel;
-			}
-			else{
-				room.memory.threatLevel = room.memory.threatLevel + threatLevel;
-			}
+		//威胁系数，防御用，计算有多少敌对creep持续入侵该房间
+		const threatLevel = room.find(FIND_HOSTILE_CREEPS).length;
+		if(threatLevel==0 || !room.memory.threatLevel){
+			room.memory.threatLevel = threatLevel;
+		}
+		else{
+			room.memory.threatLevel = room.memory.threatLevel + threatLevel;
 		}
     }
     
@@ -73,5 +72,9 @@ module.exports.loop = function () {
         if(creep.memory.role == 'outsourcing') {
         	roleOutsourcing.run(creep);
         }
+        if(creep.memory.role == 'reserveHarvester') {
+        	roleReserveHarvester.run(creep);
+        }
+        
     }
 }

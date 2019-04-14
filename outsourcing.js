@@ -7,7 +7,7 @@ var creepUtil = require('creepUtil');
  * 需要指定以下参数
  * memory.target=目标房间name
  * memory.targetRole=在目标房间担任的角色
- * memory.target=走到目标房间的指定位置后再变化为目标角色（可选参数）
+ * memory.targetObj=走到目标房间的指定位置后再变化为目标角色（可选参数，但推荐使用）
  * 
  */
 var roleOutsourcing = {
@@ -22,27 +22,27 @@ var roleOutsourcing = {
     		const targetRoom = creep.memory.target;
     		const targetObj = creep.memory.targetObj;
     		const targetRole = creep.memory.targetRole;
-        	if(targetRoom){
+    		if(targetObj){
+				const target = Game.getObjectById(targetObj);
+				if(creep.pos.findInRange([target],4).length>0){
+					creep.memory.role = creep.memory.targetRole;
+				}
+				else{
+					creep.moveTo(target);
+				}
+			}
+			else if(targetRoom){
         		if(creep.room.name!=targetRoom){
+        			//该方法在新手区时可能会撞墙，建议多用targetObj
     	    		const exitDir = creep.room.findExitTo(targetRoom);
     	        	const exit = creep.pos.findClosestByRange(exitDir);
     	        	creep.moveTo(exit);
         		}
         		else{
-        			if(targetObj){
-        				const target = Game.getObjectById(targetObj);
-        				if(creep.pos.findInRange([target],4).length>0){
-        					creep.memory.role = creep.memory.targetRole;
-        				}
-        				else{
-        					creep.moveTo(target);
-        				}
-        			}
-        			else{
-        				creep.memory.role = creep.memory.targetRole;
-        			}
+        			creep.memory.role = creep.memory.targetRole;
         		}
-        	}
+			}
+    		
     	}
     }
 };
