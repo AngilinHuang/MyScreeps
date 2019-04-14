@@ -58,15 +58,23 @@ var roleHarvester = {
         	}
         	
         	let target;
-        	const targets = creep.pos.findInRange(FIND_STRUCTURES, 3, {
+        	let targets = creep.pos.findInRange(FIND_STRUCTURES, 1, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_LINK &&
-                        structure.energy < structure.energyCapacity)
-                        ||(structure.structureType == STRUCTURE_STORAGE)
-                        ||(structure.structureType == STRUCTURE_CONTAINER &&
-                            	_.sum(structure.store)<structure.storeCapacity);
+                        structure.energy < structure.energyCapacity);
                 }
         	});
+        	if(!targets||targets.length==0){
+        		targets = creep.pos.findInRange(FIND_STRUCTURES, 3, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_LINK &&
+                            structure.energy < structure.energyCapacity)
+                            ||(structure.structureType == STRUCTURE_STORAGE)
+                            ||(structure.structureType == STRUCTURE_CONTAINER &&
+                                	_.sum(structure.store)<structure.storeCapacity);
+                    }
+            	});
+        	}
         	if(targets && targets.length>0){
         		target = targets[0];
         	}
@@ -89,9 +97,6 @@ var roleHarvester = {
                 if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
-            }
-            else{
-            	creepUtil.tryToUpgrade(creep);
             }
         }
     }

@@ -1,5 +1,6 @@
 var creepUtil = {
 	
+	//creep检查自己是否在指定的房间中，如果不是，寻找出口走向指定的房间
 	checkRoom: function(creep) {
 		const room = creep.memory.room;
     	if(room){
@@ -12,6 +13,8 @@ var creepUtil = {
     	}
     	return true;
     },
+    
+    //向指定颜色的旗子集中
     concentrateToFlag: function(creep, flagColor) {
     	const flags = creep.room.find(FIND_FLAGS, {
             filter: (flag) => {return flag.color==flagColor;
@@ -24,36 +27,25 @@ var creepUtil = {
     
     //工作单位回避敌人
     evadeHostiles: function(creep){
-    	const hostiles = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6);
-	    if(hostiles.length > 0) {
-	    	const spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
-	    	if(spawn){
-		        creep.moveTo(spawn);
-		        return true;
-	    	}
-	    }
+    	//当前房间遭到入侵后再进行计算
+    	if(creep.room.memory.threatLevel==undefined || (creep.room.memory.threatLevel!=undefined && creep.room.memory.threatLevel>0)){
+	    	const hostiles = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6);
+		    if(hostiles.length > 0) {
+		    	const spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
+		    	if(spawn){
+			        creep.moveTo(spawn);
+			        return true;
+		    	}
+		    }
+    	}
 	    return false;
     },
 	    
-
+    //采集最近的资源，FIND_SOURCES_ACTIVE 比 FIND_SOURCES 多了条件 {filter: (source) => source.energy>0}
 	harvestClosestEnergy: function(creep){
-		const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE, {filter: (source) => source.energy>0});
-		//console.log(creep.name+' find source from '+source.id);
+		const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
 		if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
 		    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
-		}
-	},
-	harvestClosestStorageOrEnergy: function(creep){
-		if(creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY]>0){
-			if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: '#ffffff'}});
-			}
-		}
-		else{
-			const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE, {filter: (source) => source.energy>0});
-			if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-			    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
-			}
 		}
 	},
 	getEnergyFromStorage: function(creep){
@@ -89,7 +81,7 @@ var creepUtil = {
 		}
 		return false;
 	},
-	
+	//从4格内有能量的link,storage,container中获取能量（适用于harverster以外的工人）
 	getEnergyFromClosestStructure: function(creep){
 		const target = creep.pos.findInRange(FIND_STRUCTURES,4,{
             filter: (structure) => {
@@ -100,7 +92,6 @@ var creepUtil = {
 	            }
 	    });
 		if(target && target.length>0){
-			//console.log(creep.name+' find energy from '+target.id);
 			if(creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target[0], {visualizePathStyle: {stroke: '#ffffff'}});
 			}
@@ -110,7 +101,7 @@ var creepUtil = {
 			return false;
 		}
 	},
-	
+	//从房间中的有能量的墓碑获取能量
 	harvestTombstone: function(creep){
 		const tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES);
 		if(tombstone && tombstone.store[RESOURCE_ENERGY]>0){
@@ -135,9 +126,9 @@ var creepUtil = {
 			//}
 		}
 	},
-	
+	//从2格内的有能量的墓碑获取能量（适用于所有工人）
 	harvestNearbyTombstone: function(creep){
-		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 3);
+		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 2);
 		if(tombstones.length>0 && tombstones[0].store[RESOURCE_ENERGY]>0){
 			if(creep.withdraw(tombstones[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 			    creep.moveTo(tombstones[0]);
@@ -185,7 +176,8 @@ var creepUtil = {
         	return false;
         }
     },
-    
+    //为spawn和extension和tower供能
+    //如果仓库旁的link能量过低，为其供能
     transferEnergyToFunctionalStructure: function(creep){
     	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -216,6 +208,8 @@ var creepUtil = {
 	    	return false;
 	    }
     },
+    
+    //为spawn和extension和tower供能
     transferEnergyToSpawnAndTower: function(creep){
     	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {

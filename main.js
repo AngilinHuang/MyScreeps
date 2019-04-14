@@ -6,7 +6,7 @@ var autoCreateCreeps = require('autoCreateCreeps');
 var roleRepairer = require('repairer');
 var structureLink = require('link');
 var roleClaimer = require('claimer');
-//var roleCarrier = require('carrier');
+var roleCarrier = require('carrier');
 var roleOutsourcing = require('outsourcing');
 
 module.exports.loop = function () {
@@ -18,9 +18,24 @@ module.exports.loop = function () {
         }
     }
     
+    //room管理
+    for(let roomName in Game.rooms){
+		const room = Game.rooms[roomName];
+		if(room.controller.my){
+			//威胁系数，防御用，计算有多少敌对creep持续入侵该房间
+			const threatLevel = room.find(FIND_HOSTILE_CREEPS).length;
+			if(threatLevel==0 || !room.memory.threatLevel){
+				room.memory.threatLevel = threatLevel;
+			}
+			else{
+				room.memory.threatLevel = room.memory.threatLevel + threatLevel;
+			}
+		}
+    }
+    
     //structure工作
     for(let name in Game.structures) {
-    	let structure = Game.structures[name];
+    	const structure = Game.structures[name];
         if(structure.structureType == STRUCTURE_TOWER) {
         	structureTower.run(structure);
         }
@@ -29,13 +44,14 @@ module.exports.loop = function () {
         }
     }
     
+    
     //自动生产creep工人
     autoCreateCreeps.create();
     
 
     //给各个creep分配工作
     for(let name in Game.creeps) {
-    	let creep = Game.creeps[name];
+    	const creep = Game.creeps[name];
         if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
@@ -51,9 +67,9 @@ module.exports.loop = function () {
         if(creep.memory.role == 'claimer') {
         	roleClaimer.run(creep);
         }
-        /*if(creep.memory.role == 'carrier') {
+        if(creep.memory.role == 'carrier') {
         	roleCarrier.run(creep);
-        }*/
+        }
         if(creep.memory.role == 'outsourcing') {
         	roleOutsourcing.run(creep);
         }
