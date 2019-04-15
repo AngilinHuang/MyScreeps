@@ -31,6 +31,12 @@ var roleCarrier = {
     		const targetObj = Game.getObjectById(targetId);
     		if(targetObj){
         		if(oper==0){
+        			//如果当前creep容量满，跳过所有取货动作
+        			if(_.sum(creep.carry)==carryCapacity){
+        				transportArray.push(target);
+        		    	creep.memory.transportList= transportArray.join(";");
+        		    	return;
+        			}
         			if(!creepUtil.harvestNearbyTombstone(creep)){
         				let returnValue = creep.withdraw(targetObj, resourceType);
             			if(returnValue == ERR_NOT_IN_RANGE) {
@@ -43,6 +49,12 @@ var roleCarrier = {
         			}
         		}
         		else if(oper==1){
+        			//如果当前creep没有携带资源，跳过所有存货动作
+        			if(_.sum(creep.carry)==0){
+        				transportArray.push(target);
+        		    	creep.memory.transportList= transportArray.join(";");
+        		    	return;
+        			}
         			let returnValue = creep.transfer(targetObj, resourceType);
         			if(returnValue == ERR_NOT_IN_RANGE) {
         	            creep.moveTo(targetObj, {visualizePathStyle: {stroke: '#ffffff'}});
