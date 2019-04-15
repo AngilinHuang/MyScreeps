@@ -15,6 +15,8 @@ var roleOutsourcing = {
     	if(creepUtil.evadeHostiles(creep)){
     		return;
     	}
+    	
+    	
     	if(creep.carry.energy < creep.carryCapacity){
     		creepUtil.getEnergyFromStorage(creep);
     	}
@@ -22,21 +24,41 @@ var roleOutsourcing = {
     		const targetRoom = creep.memory.target;
     		const targetObj = creep.memory.targetObj;
     		const targetRole = creep.memory.targetRole;
+    		
+    		const passThroughRoom = creep.memory.passThroughRoom;
+        	if(passThroughRoom){
+        		if(creep.room.name!=passThroughRoom){
+    	    		const exitDir = creep.room.findExitTo(passThroughRoom);
+    	        	const exit = creep.pos.findClosestByRange(exitDir);
+    	        	creep.moveTo(exit);
+    	    		return;
+        		}
+        		else{
+        			creep.memory.passThroughRoom = undefined;
+        		}
+        	}
+        	
+    		//targetObj的问题在于没房间视野就获取不到这个房间的对象
     		if(targetObj){
 				const target = Game.getObjectById(targetObj);
-				if(creep.pos.findInRange([target],4).length>0){
-					creep.memory.role = creep.memory.targetRole;
+				if(target){
+					if(creep.pos.findInRange(target,4).length>0){
+						creep.memory.role = creep.memory.targetRole;
+					}
+					else{
+						creep.moveTo(target);
+						return;
+					}
 				}
-				else{
-					creep.moveTo(target);
-				}
+				
 			}
-			else if(targetRoom){
+			if(targetRoom){
         		if(creep.room.name!=targetRoom){
         			//该方法在新手区时可能会撞墙，建议多用targetObj
     	    		const exitDir = creep.room.findExitTo(targetRoom);
     	        	const exit = creep.pos.findClosestByRange(exitDir);
     	        	creep.moveTo(exit);
+    	        	return;
         		}
         		else{
         			creep.memory.role = creep.memory.targetRole;
