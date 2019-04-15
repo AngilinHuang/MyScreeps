@@ -44,6 +44,7 @@ var autoCreateCreeps = {
     	const claimers = [{template:claimer1300, target: 'W15S17', oper:'reserve' },
     		{template:claimer1300, target: 'W14S17', oper:'reserve' ,passThroughRoom:'W15S17'}];
    
+        //TODO reserve room的防御者，只要比1000血的invader强点就行了
     	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<1){
             Game.spawns['Spawn1'].spawnCreep( meleeSmall,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
         }

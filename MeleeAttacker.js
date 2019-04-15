@@ -39,6 +39,7 @@ var roleMeleeAttacker = {
 	        	creep.moveTo(exit);
     		}
     		else{
+    		    //TODO 避免挡路，需要更好的写法
     			creep.move(TOP);
     		}
     	}

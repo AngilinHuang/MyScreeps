@@ -32,7 +32,7 @@ var roleCarrier = {
     		if(targetObj){
         		if(oper==0){
         			//如果当前creep容量满，跳过所有取货动作
-        			if(_.sum(creep.carry)==carryCapacity){
+        			if(_.sum(creep.carry)==creep.carryCapacity){
         				transportArray.push(target);
         		    	creep.memory.transportList= transportArray.join(";");
         		    	return;
