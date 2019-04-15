@@ -9,6 +9,7 @@ var roleClaimer = require('claimer');
 var roleCarrier = require('carrier');
 var roleOutsourcing = require('outsourcing');
 var roleReserveHarvester = require('reserveHarvester');
+var roleMeleeAttacker = require('meleeAttacker');
 
 module.exports.loop = function () {
 
@@ -75,6 +76,8 @@ module.exports.loop = function () {
         if(creep.memory.role == 'reserveHarvester') {
         	roleReserveHarvester.run(creep);
         }
-        
+        if(creep.memory.role == 'meleeAttacker') {
+        	roleMeleeAttacker.run(creep);
+        }
     }
 }

@@ -12,7 +12,7 @@ var autoCreateCreeps = {
     	//使用outsourcing远程支持新占房间时，优先发送upgrader和builder，等到基建完成后再发送harvester
     	//也能支持远程reserve采矿
     	let outsourcingSupports = [{room:'W15S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1},
-    				{room:'W14S17',builderCount:1,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:0, targetObj:'5bbcac1c9099fc012e634f48'}];
+    				{room:'W14S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1, targetObj:'5bbcac1c9099fc012e634f48',passThroughRoom:'W15S17'}];
     	
     	const worker200 = [WORK,CARRY,MOVE];
     	const worker400 = [WORK,WORK,CARRY,CARRY,MOVE,MOVE];
@@ -30,26 +30,38 @@ var autoCreateCreeps = {
     	const carrier1050 = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
     	const carrier1200 = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
     	const carrier1650 = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-    	
     	const claimer650 = [CLAIM,MOVE];
     	const claimer1300 = [CLAIM,MOVE,CLAIM,MOVE];
+    	const meleeSmall = [TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK];
     	
     	//carrier列表
-    	const carriers = [{room:'W15S18',routeId:1, template:carrier1650, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cb0860ef45c1f206e342aa2,1,'+RESOURCE_ENERGY},
-    		{room:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY}];
+    	const carriers = [{room:'W15S18',dangerRooms:['W15S17'],routeId:1, template:carrier1650, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
+    		{room:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
+    	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:3, template:carrier1650, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
+    	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:4, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY}];
     	
     	//clamers列表，主要用于reserve
     	const claimers = [{template:claimer1300, target: 'W15S17', oper:'reserve' },
     		{template:claimer1300, target: 'W14S17', oper:'reserve' ,passThroughRoom:'W15S17'}];
-    	//房间寻路findExitTo不会判断新手区墙的存在，直接撞墙了
-    	//{template:claimer1300, target: 'W14S17', oper:'reserve' }
-    	
-    	
+   
+    	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<1){
+            Game.spawns['Spawn1'].spawnCreep( meleeSmall,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+        }
+   
+    	if(Game.rooms['W15S17']&&Game.rooms['W15S17'].memory.threatLevel>0
+    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<2){
+    		Game.spawns['Spawn1'].spawnCreep( meleeSmall,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } );
+    	}
+    	else if(Game.rooms['W14S17']&&Game.rooms['W14S17'].memory.threatLevel>0
+    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<2){
+    		Game.spawns['Spawn1'].spawnCreep( meleeSmall,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+    	}
     	
     	
     	for(let name in Game.rooms){
     		const room = Game.rooms[name];
     		const spawns = room.find(FIND_MY_SPAWNS);
+    		//console.log(name+' spawnsCount='+spawns.length);
     		if(spawns.length>0){
     			//计算当前房间每300tick的能量总和
     			let energyCapacity = 0;
@@ -75,7 +87,7 @@ var autoCreateCreeps = {
     				repairCount = 1;
     			}
     			else if(room.controller.level==6){
-    				upgraderCount++;
+    				upgraderCount=3;
     			}
     			else if(room.controller.level==8){
     				upgraderCount = 0;
@@ -123,6 +135,9 @@ var autoCreateCreeps = {
     			const builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder' && creep.memory.room==name);
     			const upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.room==name);
     			const repairers = _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer' && creep.memory.room==name);
+    	        
+    	        //console.log(name+' upgraderCount now='+upgraders.length+' expected='+upgraderCount);
+    	        
     	        
     			//复活用（因为能量会自动恢复到300）
     			if(harvesters.length==0 && builders.length==0 && upgraders.length==0 && repairers==0) {
@@ -182,6 +197,43 @@ var autoCreateCreeps = {
     	            return;
     	        }
     	        
+    	        if(carriers.length>0){
+    	        	const currentCarriers = _.filter(Game.creeps, (creep) => creep.memory.role == 'carrier');
+    	        	if(carriers.length>currentCarriers.length){
+    	        		for(let i=0;i<carriers.length;i++){
+    	        			const carrier = carriers[i];
+    	        			if(carrier.room!=name){
+    	        				continue;
+    	        			}
+    	        			let isExisted = false;
+    	        			for(let j=0;j<currentCarriers.length;j++){
+    	        				const currentCarrier = currentCarriers[j];
+    	        				if(currentCarrier.memory.routeId == carrier.routeId){
+    	        					isExisted = true;
+    	        					break;
+    	        				}
+    	        			}
+    	        			if(!isExisted){
+    	        				//当进攻的reserve房间受到敌人入侵时停止建造
+    	        				let isDanger = false;
+    	        				if(carrier.dangerRooms!=undefined){
+    	        					for(let d=0;d<carrier.dangerRooms.length;d++){
+    	        						let dangerRoom = carrier.dangerRooms[d];
+    	        						if(Game.rooms[dangerRoom] && Game.rooms[dangerRoom].memory.threatLevel!=undefined && Game.rooms[dangerRoom].memory.threatLevel>0){
+        	        						isDanger = true;
+        	        					}
+    	        					}
+    	        				}
+    	        				if(!isDanger){
+    	        					spawns[0].spawnCreep(carrier.template,'Carrier'+Game.time,{ memory: { role: 'carrier', transportList: carrier.transportList,routeId: carrier.routeId} } );
+                	    	        return;
+    	        				}
+        	        			
+    	        			}
+    	        		}
+    	        	}
+    	        }
+    	        
     	        //不知道有了多个room之后，这段代码会不会导致多个房间同时生产
     	        //如果有问题，就要记录到memory里
     	        for(let k=0;k<outsourcingSupports.length;k++){
@@ -193,27 +245,27 @@ var autoCreateCreeps = {
     	        	
     	        	if(outsourcingSupport && outsourcingSupport.builderCount>0 && outsourcingSupport.builderCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'builder' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.builderCount=outsourcingSupport.builderCount-1;
-        	        	spawns[0].spawnCreep(builder800,'OutsourcingBuilder'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj } } );
+        	        	spawns[0].spawnCreep(builder800,'OutsourcingBuilder'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
         	        	return;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.upgraderCount>0 && outsourcingSupport.upgraderCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'upgrader' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.upgraderCount=outsourcingSupport.upgraderCount-1;
-        	        	spawns[0].spawnCreep(builder800,'OutsourcingUpgrader'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'upgrader', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj } } );
+        	        	spawns[0].spawnCreep(builder800,'OutsourcingUpgrader'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'upgrader', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
         	        	return;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.harvesterCount>0 && outsourcingSupport.harvesterCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'harvester' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.harvesterCount=outsourcingSupport.harvesterCount-1;
-        	        	spawns[0].spawnCreep(worker1000,'OutsourcingHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'harvester', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj } } );
+        	        	spawns[0].spawnCreep(worker1000,'OutsourcingHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'harvester', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
         	        	return;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.repairCount>0 && outsourcingSupport.repairCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'repairer' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.repairCount=outsourcingSupport.repairCount-1;
-        	        	spawns[0].spawnCreep(builder800,'OutsourcingRepairer'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'repairer', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj } } );
+        	        	spawns[0].spawnCreep(builder800,'OutsourcingRepairer'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'repairer', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
         	        	return;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.reserveHarvesterCount>0 && outsourcingSupport.reserveHarvesterCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'reserveHarvester' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.reserveHarvesterCount=outsourcingSupport.reserveHarvesterCount-1;
-        	        	spawns[0].spawnCreep(worker1000,'OutsourcingReserveHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'reserveHarvester', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj } } );
+        	        	spawns[0].spawnCreep(worker1000,'OutsourcingReserveHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'reserveHarvester', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
         	        	return;
         	    	}
     	        }
@@ -248,29 +300,7 @@ var autoCreateCreeps = {
     	        	}
     	        }
     	        
-    	        if(carriers.length>0){
-    	        	const currentCarriers = _.filter(Game.creeps, (creep) => creep.memory.role == 'carrier');
-    	        	if(carriers.length>currentCarriers.length){
-    	        		for(let i=0;i<carriers.length;i++){
-    	        			const carrier = carriers[i];
-    	        			if(carrier.room!=name){
-    	        				continue;
-    	        			}
-    	        			let isExisted = false;
-    	        			for(let j=0;j<currentCarriers.length;j++){
-    	        				const currentCarrier = currentCarriers[j];
-    	        				if(currentCarrier.memory.routeId == carrier.routeId){
-    	        					isExisted = true;
-    	        					break;
-    	        				}
-    	        			}
-    	        			if(!isExisted){
-        	        			spawns[0].spawnCreep(carrier.template,'Carrier'+Game.time,{ memory: { role: 'carrier', transportList: carrier.transportList,routeId: carrier.routeId} } );
-            	    	        return;
-    	        			}
-    	        		}
-    	        	}
-    	        }
+    	        
     	        
     	        if(spawns[0].spawning) {
     	            const spawningCreep = Game.creeps[spawns[0].spawning.name];

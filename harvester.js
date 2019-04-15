@@ -46,17 +46,6 @@ var roleHarvester = {
         	}
         }
         else {
-        	//外包harvester需要自己修理container
-        	if(creep.memory.targetRole){
-        		const repaireContainer = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.hits < 0.4*structure.hitsMax && structure.structureType==STRUCTURE_CONTAINER});
-        		if(repaireContainer.length>0){
-        			if(creep.repair(repaireContainer[0]) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(repaireContainer[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                    }
-            		return;
-        		}
-        	}
-        	
         	let target;
         	let targets = creep.pos.findInRange(FIND_STRUCTURES, 1, {
                 filter: (structure) => {

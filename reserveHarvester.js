@@ -73,7 +73,7 @@ var roleReserveHarvester = {
         	}
         	
         	if(!target){
-                target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < 0.3*structure.hitsMax && structure.structureType!=STRUCTURE_WALL && structure.structureType!=STRUCTURE_RAMPART});
+                target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < 0.6*structure.hitsMax && structure.structureType!=STRUCTURE_WALL && structure.structureType!=STRUCTURE_RAMPART});
         	}
             if(target) {
             	creep.memory.targetId = target.id;
