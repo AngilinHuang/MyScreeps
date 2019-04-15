@@ -18,6 +18,7 @@ var roleCarrier = {
     	
     	//房间，建筑id，装货还是卸货，资源类型（能量可以不填）
     	let target = transportArray.shift();
+    	
     	if(!target){
     		console.log('carrier '+creep.name+' transportList does not work. transportList='+transportList);
     		return;
@@ -31,12 +32,14 @@ var roleCarrier = {
     		const targetObj = Game.getObjectById(targetId);
     		if(targetObj){
         		if(oper==0){
+        		    //console.log(creep.name+' target='+targetObj.id);
         			//如果当前creep容量满，跳过所有取货动作
         			if(_.sum(creep.carry)==creep.carryCapacity){
         				transportArray.push(target);
         		    	creep.memory.transportList= transportArray.join(";");
         		    	return;
         			}
+        			//console.log(creep.name+' target='+targetObj.id);
         			if(!creepUtil.harvestNearbyTombstone(creep)){
         				let returnValue = creep.withdraw(targetObj, resourceType);
             			if(returnValue == ERR_NOT_IN_RANGE) {
@@ -45,6 +48,9 @@ var roleCarrier = {
             			else if(returnValue == OK || returnValue == ERR_NOT_ENOUGH_RESOURCES || returnValue == ERR_FULL){
             				transportArray.push(target);
             		    	creep.memory.transportList= transportArray.join(";");
+            			}
+            			else{
+            			    console.log('carrier '+creep.name+' withdraw error. target='+targetObj.id+' resourceType='+resourceType+' returnVale='+returnValue);
             			}
         			}
         		}

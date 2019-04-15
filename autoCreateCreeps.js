@@ -32,13 +32,13 @@ var autoCreateCreeps = {
     	const carrier1650 = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
     	const claimer650 = [CLAIM,MOVE];
     	const claimer1300 = [CLAIM,MOVE,CLAIM,MOVE];
-    	const meleeSmall = [TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK];
+    	const reserveRoomDefender = [TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK];
     	
     	//carrier列表
     	const carriers = [{room:'W15S18',dangerRooms:['W15S17'],routeId:1, template:carrier1650, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
-    		{room:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
+    		{room:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
     	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:3, template:carrier1650, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
-    	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:4, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY}];
+    	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:4, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY}];
     	
     	//clamers列表，主要用于reserve
     	const claimers = [{template:claimer1300, target: 'W15S17', oper:'reserve' },
@@ -46,16 +46,16 @@ var autoCreateCreeps = {
    
         //TODO reserve room的防御者，只要比1000血的invader强点就行了
     	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<1){
-            Game.spawns['Spawn1'].spawnCreep( meleeSmall,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+            Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
         }
    
     	if(Game.rooms['W15S17']&&Game.rooms['W15S17'].memory.threatLevel>0
     			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<2){
-    		Game.spawns['Spawn1'].spawnCreep( meleeSmall,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } );
+    		Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } );
     	}
     	else if(Game.rooms['W14S17']&&Game.rooms['W14S17'].memory.threatLevel>0
     			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<2){
-    		Game.spawns['Spawn1'].spawnCreep( meleeSmall,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+    		Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
     	}
     	
     	
@@ -146,13 +146,13 @@ var autoCreateCreeps = {
     					const newName = 'Builder' + Game.time;
         	            spawns[0].spawnCreep(worker200, newName,
         	                {memory: {role: 'builder', room:name}});
-        	            return;
+        	            continue;
     				}
     				else{
     					const newName = 'Harvester' + Game.time;
         	            spawns[0].spawnCreep(worker300, newName,
         	                {memory: {role: 'harvester', room:name}});
-        	            return;
+        	            continue;
     				}
     	        }
     	    	else if(harvesters.length < harvesterCount) {
@@ -176,26 +176,26 @@ var autoCreateCreeps = {
 	    	            spawns[0].spawnCreep(workerTemplate, newName,
 	    	                {memory: {role: 'harvester', room:name}});
     	    		}
-    	            return;
+    	    		continue;
     	        }
 
     			if(builders.length < builderCount) {
     	        	const newName = 'Builder' + Game.time;
     	            spawns[0].spawnCreep(builderTemplate, newName,
     	                {memory: {role: 'builder', room:name}});
-    	            return;
+    	            continue;
     	        }
     	        if(upgraders.length < upgraderCount) {
     	        	const newName = 'Upgrader' + Game.time;
     	            spawns[0].spawnCreep(upgraderTemplate, newName,
     	                {memory: {role: 'upgrader', room:name}});
-    	            return;
+    	            continue;
     	        }
     	        if(repairers.length < repairCount) {
     	            const newName = 'Repairer' + Game.time;
     	            spawns[0].spawnCreep(repairerTemplate, newName,
     	                {memory: {role: 'repairer', room:name}});
-    	            return;
+    	            continue;
     	        }
     	        
     	        if(carriers.length>0){
@@ -227,7 +227,7 @@ var autoCreateCreeps = {
     	        				}
     	        				if(!isDanger){
     	        					spawns[0].spawnCreep(carrier.template,'Carrier'+Game.time,{ memory: { role: 'carrier', transportList: carrier.transportList,routeId: carrier.routeId} } );
-                	    	        return;
+    	        					continue;
     	        				}
         	        			
     	        			}
@@ -247,27 +247,27 @@ var autoCreateCreeps = {
     	        	if(outsourcingSupport && outsourcingSupport.builderCount>0 && outsourcingSupport.builderCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'builder' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.builderCount=outsourcingSupport.builderCount-1;
         	        	spawns[0].spawnCreep(builder800,'OutsourcingBuilder'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
-        	        	return;
+        	        	continue;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.upgraderCount>0 && outsourcingSupport.upgraderCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'upgrader' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.upgraderCount=outsourcingSupport.upgraderCount-1;
         	        	spawns[0].spawnCreep(builder800,'OutsourcingUpgrader'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'upgrader', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
-        	        	return;
+        	        	continue;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.harvesterCount>0 && outsourcingSupport.harvesterCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'harvester' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.harvesterCount=outsourcingSupport.harvesterCount-1;
         	        	spawns[0].spawnCreep(worker1000,'OutsourcingHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'harvester', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
-        	        	return;
+        	        	continue;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.repairCount>0 && outsourcingSupport.repairCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'repairer' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.repairCount=outsourcingSupport.repairCount-1;
         	        	spawns[0].spawnCreep(builder800,'OutsourcingRepairer'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'repairer', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
-        	        	return;
+        	        	continue;
         	    	}
         	        if(outsourcingSupport && outsourcingSupport.reserveHarvesterCount>0 && outsourcingSupport.reserveHarvesterCount>_.filter(Game.creeps, (creep) => creep.memory.targetRole == 'reserveHarvester' && creep.memory.target==outsourcingSupport.room).length){
         	        	outsourcingSupport.reserveHarvesterCount=outsourcingSupport.reserveHarvesterCount-1;
         	        	spawns[0].spawnCreep(worker1000,'OutsourcingReserveHarvester'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'reserveHarvester', target: outsourcingSupport.room, room:outsourcingSupport.room, targetObj:outsourcingSupport.targetObj, passThroughRoom:outsourcingSupport.passThroughRoom } } );
-        	        	return;
+        	        	continue;
         	    	}
     	        }
     	        
@@ -292,7 +292,7 @@ var autoCreateCreeps = {
     	        	        	if(!(Game.rooms[target] && Game.rooms[target].memory.threatLevel!=undefined && Game.rooms[target].memory.threatLevel>0)){
     	        	        		if(!Game.rooms[target] || Game.rooms[target].controller.reservation.ticksToEnd<3000){
             	        				spawns[0].spawnCreep( claimer.template,'Claimer'+Game.time,{ memory: { role: 'claimer', target: claimer.target,oper:claimer.oper, passThroughRoom:claimer.passThroughRoom } } );
-                	    	        	return;
+            	        				continue;
             	        			}
     	        	        	}
         	        			
