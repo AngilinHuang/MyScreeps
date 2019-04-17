@@ -49,13 +49,6 @@ var roleReserveHarvester = {
         }
         else {
         	//reserveHarvester需要自己修理container和road
-        	const repaireContainer = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.hits < 0.6*structure.hitsMax && structure.structureType==STRUCTURE_CONTAINER});
-    		if(repaireContainer.length>0){
-    			if(creep.repair(repaireContainer[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(repaireContainer[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                }
-        		return;
-    		}
         	let target;
         	let targetId = creep.memory.targetId;
         	if(targetId!=undefined && Game.getObjectById(targetId)!=undefined){
@@ -73,7 +66,7 @@ var roleReserveHarvester = {
         	}
         	
         	if(!target){
-                target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < 0.6*structure.hitsMax && structure.structureType!=STRUCTURE_WALL && structure.structureType!=STRUCTURE_RAMPART});
+                target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.hits < 0.7*structure.hitsMax && structure.structureType!=STRUCTURE_WALL && structure.structureType!=STRUCTURE_RAMPART});
         	}
             if(target) {
             	creep.memory.targetId = target.id;

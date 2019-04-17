@@ -1,21 +1,24 @@
-
 var creepUtil = require('creepUtil');
-
 
 /*
  * 
  * 
- * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE],'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } )
- * 
+ * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,MOVE],'Ranged'+Game.time,{ memory: { role: 'rangedAttacker', target: 'W15S17'} } )
  */
-var roleMeleeAttacker = {
+var roleRangedAttacker = {
     run: function(creep) {
     	const target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-    	if(target) {
-    	    if(creep.attack(target) == ERR_NOT_IN_RANGE) {
+    	const targets = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
+    	if(targets.length > 0) {
+    		if(creep.rangedAttack(targets[0]) == ERR_NOT_IN_RANGE) {
     	        creep.moveTo(target);
     	    }
     	    return;
+    	}
+    	else{
+    		if(target){
+    			creep.moveTo(target);
+    		}
     	}
     	
     	const passThroughRoom = creep.memory.passThroughRoom;
@@ -47,5 +50,5 @@ var roleMeleeAttacker = {
     }
 };
 
-module.exports = roleMeleeAttacker;
+module.exports = roleRangedAttacker;
 

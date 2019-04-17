@@ -111,6 +111,14 @@ var creepUtil = {
 			return true;
 		}
 		else{
+			//dropped resource要用pickup命令拾取
+			//const target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+			/*if(target) {
+			    if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
+			        creep.moveTo(target);
+			    }
+			}*/
+			
 			/*const dropedSource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
 			//Game.getObjectById('5caeb0b40a0b387d36a6f7fc').pos.findClosestByRange(FIND_DROPPED_RESOURCES);
 			//Game.getObjectById('5caeb0b40a0b387d36a6f7fc').withdraw(Game.getObjectById('5caeb0b40a0b387d36a6f7fc').pos.findClosestByRange(FIND_DROPPED_RESOURCES), RESOURCE_ENERGY)
@@ -126,13 +134,31 @@ var creepUtil = {
 			//}
 		}
 	},
-	//从2格内的有能量的墓碑获取能量（适用于所有工人）
+	//从2格内的有能量的墓碑获取能量（适用于所有使用能量的工人）
 	harvestNearbyTombstone: function(creep){
 		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 2);
 		if(tombstones.length>0 && tombstones[0].store[RESOURCE_ENERGY]>0){
 			if(creep.withdraw(tombstones[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 			    creep.moveTo(tombstones[0]);
 			}
+			return true;
+		}
+		else{
+			return false;
+		}
+	},
+	//从2格内的有矿物资源的墓碑获取矿物（适用于extracter）
+	harvestNearbyMineralTombstone: function(creep){
+		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 2);
+		if(tombstones.length>0 && _.sum(tombstones[0].store)>0 && tombstones[0].store[RESOURCE_ENERGY]!=_.sum(tombstones[0].store)){
+			for(let resourceType in tombstones[0].store) {
+				if(resourceType!=RESOURCE_ENERGY){
+					if(creep.withdraw(tombstones[0], resourceType) == ERR_NOT_IN_RANGE) {
+		                creep.moveTo(tombstones[0], {visualizePathStyle: {stroke: '#ffffff'}});
+		                return;
+		            }
+				}
+	    	}
 			return true;
 		}
 		else{

@@ -41,7 +41,7 @@ var roleCarrier = {
         			}
         			//console.log(creep.name+' target='+targetObj.id);
         			if(!creepUtil.harvestNearbyTombstone(creep)){
-        				let returnValue = creep.withdraw(targetObj, resourceType);
+        				const returnValue = creep.withdraw(targetObj, resourceType);
             			if(returnValue == ERR_NOT_IN_RANGE) {
             				creep.moveTo(targetObj, {visualizePathStyle: {stroke: '#ffffff'}});
             			}
@@ -49,7 +49,7 @@ var roleCarrier = {
             				transportArray.push(target);
             		    	creep.memory.transportList= transportArray.join(";");
             			}
-            			else{
+            			else if(returnValue != ERR_BUSY){
             			    console.log('carrier '+creep.name+' withdraw error. target='+targetObj.id+' resourceType='+resourceType+' returnVale='+returnValue);
             			}
         			}

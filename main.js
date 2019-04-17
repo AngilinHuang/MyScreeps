@@ -10,6 +10,8 @@ var roleCarrier = require('carrier');
 var roleOutsourcing = require('outsourcing');
 var roleReserveHarvester = require('reserveHarvester');
 var roleMeleeAttacker = require('meleeAttacker');
+var roleRangedAttacker = require('rangedAttacker');
+var roleExtracter = require('extracter');
 
 module.exports.loop = function () {
 
@@ -26,10 +28,10 @@ module.exports.loop = function () {
 		//威胁系数，防御用，计算有多少敌对creep持续入侵该房间
 		const threatLevel = room.find(FIND_HOSTILE_CREEPS).length;
 		if(threatLevel==0 || !room.memory.threatLevel){
-			room.memory.threatLevel = threatLevel;
+			room.memory.threatLevel = 0;
 		}
 		else{
-			room.memory.threatLevel = room.memory.threatLevel + threatLevel;
+			room.memory.threatLevel = threatLevel;
 		}
     }
     
@@ -78,6 +80,12 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'meleeAttacker') {
         	roleMeleeAttacker.run(creep);
+        }
+        if(creep.memory.role == 'rangedAttacker') {
+        	roleRangedAttacker.run(creep);
+        }
+        if(creep.memory.role == 'extracter') {
+        	roleExtracter.run(creep);
         }
     }
 }
