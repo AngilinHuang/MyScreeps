@@ -42,7 +42,7 @@ var roleOutsourcing = {
     		if(targetObj){
 				const target = Game.getObjectById(targetObj);
 				if(target){
-					if(creep.pos.findInRange(target,4).length>0){
+					if(creep.pos.findInRange([target],4).length>0){
 						creep.memory.role = creep.memory.targetRole;
 					}
 					else{
