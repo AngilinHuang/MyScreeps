@@ -27,10 +27,11 @@ module.exports.loop = function () {
 		const room = Game.rooms[roomName];
 		//威胁系数，防御用，计算有多少敌对creep持续入侵该房间
 		const threatLevel = room.find(FIND_HOSTILE_CREEPS).length;
-		if(threatLevel==0 || !room.memory.threatLevel){
+		if(threatLevel==0){
 			room.memory.threatLevel = 0;
 		}
 		else{
+			console.log(roomName+' is under attack. enemy count='+threatLevel)
 			room.memory.threatLevel = threatLevel;
 		}
     }
