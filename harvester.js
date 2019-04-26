@@ -7,7 +7,8 @@ var creepUtil = require('creepUtil');
  * 2、用能量填满房间内最近的spawn，extension，tower，storage
  * 采集优先级
  * 1、从3格内有能量的tombstone获取能量
- * 2、从当前房间内最近的有能量的source采集
+ * 2、从指定source采集（配合autoCreateCreep的为能量点平均分配harvester功能，目前设置为采光指定能量点后不会跑去另一个采集点）
+ * 3、从当前房间内最近的有能量的source采集
  * 
  */
 var roleHarvester = {
@@ -35,9 +36,6 @@ var roleHarvester = {
         				    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
         				}
         				return;
-        			}
-        			else{
-        				creepUtil.harvestClosestEnergy(creep);
         			}
         		}
         		else{
