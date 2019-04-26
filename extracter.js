@@ -10,12 +10,13 @@ var creepUtil = require('creepUtil');
  * 2、从当前房间内mineral采集
  * 
  * 
- * 注意：extractor有 5tick harvest CD，每50000tick储量恢复，用mineralType属性查看矿物是什么
+ * 注意：extractor有 5tick harvest CD，每个work部件采集1（不是2），50000tick储量恢复CD，用mineralType属性查看矿物是什么
  * 储量DENSITY_LOW: 15,000 
  * DENSITY_MODERATE: 35,000
  * DENSITY_HIGH: 70,000 
  * DENSITY_ULTRA: 100,000
- * 可见extracter不需要太多的work部件
+ * 注意50000tick储量恢复CD，是在采光这个mineral矿点后才触发的，所以work部件多还是有必要的
+ * 从市场交易价格来看，采集矿物资源不如采集能量，只能算是能量采完后的补充手段
  * 
  */
 var roleExtracter = {

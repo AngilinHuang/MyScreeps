@@ -26,6 +26,7 @@ var autoCreateCreeps = {
     	const upgrader950 = [WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE];
     	const builder800 = [WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
     	const upgrader1050 = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+    	const upgrader1900 = [WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
     	const worker1300 = [WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
     	const carrier750 = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
     	const carrier900 = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
@@ -42,8 +43,8 @@ var autoCreateCreeps = {
     	const carriers = [{room:'W15S18',dangerRooms:['W15S17'],routeId:1, template:carrier900, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
     		{room:'W15S18',dangerRooms:['W15S17'],routeId:5, template:carrier900, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
     		//{room:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
-    		{room:'W15S19',routeId:2, template:carrier750, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
-    		{room:'W15S19',routeId:6, template:carrier750, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
+    		{room:'W15S19',routeId:2, template:carrier900, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
+    		//{room:'W15S19',routeId:6, template:carrier750, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
     	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:3, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
     	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:4, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY}];
     	//W15S18向W15S19的storage运输能量
@@ -134,11 +135,14 @@ var autoCreateCreeps = {
     				builderCount = 1;
     				repairCount = 1;
     			}
+    			else if(room.controller.level==5){
+    				upgraderCount = 1;
+    			}
     			else if(room.controller.level==6){
-    				upgraderCount = 3;
+    				upgraderCount = 1;
     			}
     			else if(room.controller.level==7){
-    				
+    				upgraderCount = 1;
     			}
     			else if(room.controller.level==8){
     				upgraderCount = 0;
@@ -162,12 +166,13 @@ var autoCreateCreeps = {
     			let repairerTemplate = worker200;
     			let upgraderTemplate = worker200;
     			
-    			//5级满extension，且此时已经造好link了，upgrader牺牲移动换工作效率
+    			
+    			//5级满extension，且此时已经造好link了，upgrader牺牲移动换工作效率，压缩upgrader数量到1个
     			if(room.energyCapacityAvailable>=1800){
     				workerTemplate = worker1000;
     				builderTemplate = builder800;
     				repairerTemplate = builder800;
-    				upgraderTemplate = upgrader950;
+    				upgraderTemplate = upgrader1900;
     			}
     			//4级满extension
     			else if(room.energyCapacityAvailable>=1300){

@@ -22,6 +22,10 @@ var creepUtil = {
         });
         if(flags.length>0){
         	creep.moveTo(flags[0], {visualizePathStyle: {stroke: '#ffffff'}});
+        	return true;
+        }
+        else{
+        	return false;
         }
     },
     
@@ -144,10 +148,26 @@ var creepUtil = {
 			return true;
 		}
 		else{
+			//FIND_DROPPED_ENERGY即将被移除，需要用FIND_DROPPED_RESOURCES替代
+			/*const droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 2);
+			if(droppedEnergy.length>0) {
+				const returnValue = creep.pickup(droppedEnergy[0]);
+			    if(returnValue == ERR_NOT_IN_RANGE) {
+			        creep.moveTo(droppedEnergy[0]);
+			        return true;
+			    }
+			    else if(returnValue == OK || returnValue == ERR_BUSY){
+			    	return true;
+			    }
+			    else {
+			    	console.log(creep.name + ' pickup error. returnValue='+returnValue);
+			    }
+			}*/
 			return false;
 		}
 	},
 	//从2格内的有矿物资源的墓碑获取矿物（适用于extracter）
+	//掉落的矿物资源无法pickup，报-7错误
 	harvestNearbyMineralTombstone: function(creep){
 		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 2);
 		if(tombstones.length>0 && _.sum(tombstones[0].store)>0 && tombstones[0].store[RESOURCE_ENERGY]!=_.sum(tombstones[0].store)){

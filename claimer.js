@@ -6,7 +6,9 @@ var creepUtil = require('creepUtil');
  * 
  * 
  * claim功能
- * Game.spawns['Spawn1'].spawnCreep( [CLAIM,MOVE],'Claimer'+Game.time,{ memory: { role: 'claimer', target: 'W15S19',oper:'claim' } } );
+ * 如果该controller已被其他玩家占有，则会使用attackController直到能够claim
+ * Game.spawns['Spawn1'].spawnCreep( [CLAIM,MOVE],'Claimer'+Game.time,{ memory: { role: 'claimer', target: 'W14S18',oper:'claim' } } );
+ * 
  * 
  * reserve功能
  * reserve后能量点变为3000能量，且可以建造道路和container
@@ -56,8 +58,16 @@ var roleClaimer = {
     					}
     				}
     				else{
-	    			    if(creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+    					const returnValue = creep.claimController(creep.room.controller);
+	    			    if(returnValue == ERR_NOT_IN_RANGE) {
 	    			        creep.moveTo(creep.room.controller);
+	    			    }
+	    			    else if(returnValue == ERR_INVALID_TARGET){
+	    			    	if(!creep.room.controller.my) {
+							    if(creep.attackController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+							        creep.moveTo(creep.room.controller);
+							    }
+	    					}
 	    			    }
     				}
     			}

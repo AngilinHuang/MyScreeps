@@ -1,11 +1,15 @@
-
 var creepUtil = require('creepUtil');
 
-
 /*
+ * MeleeAttacker
  * 
+ * 行动优先级
+ * 1、攻击房间内最近的敌人
+ * 2、如果没有敌人且设置了passThroughRoom，会先进入passThroughRoom
+ * 3、朝着targetRoom前进
+ * 4、朝着红色flag移动
  * 
- * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE],'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } )
+ * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE],'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S18'} } )
  * 
  */
 var roleMeleeAttacker = {
@@ -40,8 +44,10 @@ var roleMeleeAttacker = {
 	        	creep.moveTo(exit);
     		}
     		else{
-    		    //TODO 避免挡路，需要更好的写法
-    			creep.move(TOP);
+    			if(!creepUtil.concentrateToFlag(creep,COLOR_RED)){
+    				//TODO 避免挡路，需要更好的写法
+        			creep.move(TOP);
+    			}
     		}
     	}
     }

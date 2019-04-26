@@ -12,6 +12,8 @@ var roleReserveHarvester = require('reserveHarvester');
 var roleMeleeAttacker = require('meleeAttacker');
 var roleRangedAttacker = require('rangedAttacker');
 var roleExtracter = require('extracter');
+var roleUnraveler = require('unraveler');
+var roleHydra = require('hydra');
 
 module.exports.loop = function () {
 
@@ -87,6 +89,12 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'extracter') {
         	roleExtracter.run(creep);
+        }
+        if(creep.memory.role == 'unraveler') {
+        	roleUnraveler.run(creep);
+        }
+        if(creep.memory.role == 'hydra') {
+        	roleHydra.run(creep);
         }
     }
 }

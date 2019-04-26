@@ -1,9 +1,15 @@
 var creepUtil = require('creepUtil');
 
 /*
+ * RangedAttacker
  * 
+ * 行动优先级
+ * 1、攻击房间内最近的敌人
+ * 2、如果没有敌人且设置了passThroughRoom，会先进入passThroughRoom
+ * 3、朝着targetRoom前进
+ * 4、朝着红色flag移动
  * 
- * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,MOVE],'Ranged'+Game.time,{ memory: { role: 'rangedAttacker', target: 'W15S17'} } )
+ * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,RANGED_ATTACK,MOVE,RANGED_ATTACK,MOVE,RANGED_ATTACK,MOVE,RANGED_ATTACK,MOVE,RANGED_ATTACK,MOVE],'Ranged'+Game.time,{ memory: { role: 'rangedAttacker', target: 'W14S18'} } )
  */
 var roleRangedAttacker = {
     run: function(creep) {
@@ -43,8 +49,10 @@ var roleRangedAttacker = {
 	        	creep.moveTo(exit);
     		}
     		else{
-    		    //TODO 避免挡路，需要更好的写法
-    			creep.move(TOP);
+    			if(!creepUtil.concentrateToFlag(creep,COLOR_RED)){
+    				//TODO 避免挡路，需要更好的写法
+        			creep.move(TOP);
+    			}
     		}
     	}
     }
