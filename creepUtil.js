@@ -44,12 +44,28 @@ var creepUtil = {
     	}
 	    return false;
     },
-	    
-    //采集最近的资源，FIND_SOURCES_ACTIVE 比 FIND_SOURCES 多了条件 {filter: (source) => source.energy>0}
+	
+    /**
+     * 采集最近的资源，FIND_SOURCES_ACTIVE 比 FIND_SOURCES 多了条件 {filter: (source) => source.energy>0}
+     * 
+     * OK	0	The operation has been scheduled successfully.
+	    ERR_NOT_OWNER	-1	You are not the owner of this creep, or the room controller is owned or reserved by another player.
+		ERR_BUSY	-4	The creep is still being spawned.
+		ERR_NOT_FOUND	-5	Extractor not found. You must build an extractor structure to harvest minerals. Learn more
+		ERR_NOT_ENOUGH_RESOURCES	-6	The target does not contain any harvestable energy or mineral.
+		ERR_INVALID_TARGET	-7	The target is not a valid source or mineral object.
+		ERR_NOT_IN_RANGE	-9	The target is too far away.
+		ERR_TIRED	-11	The extractor is still cooling down.
+		ERR_NO_BODYPART	-12	There are no WORK body parts in this creep’s body.
+     */
 	harvestClosestEnergy: function(creep){
 		const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
-		if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+		const returnValue = creep.harvest(source);
+		if(returnValue == ERR_NOT_IN_RANGE) {
 		    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+		}
+		else if(returnValue!=OK && returnValue!=ERR_BUSY){
+			console.log(creep.name+' harvest error. returnValue='+returnValue);
 		}
 	},
 	getEnergyFromStorage: function(creep){

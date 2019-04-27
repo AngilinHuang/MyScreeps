@@ -13,7 +13,8 @@ var autoCreateCreeps = {
     	//使用outsourcing远程支持新占房间时，优先发送upgrader和builder，等到基建完成后再发送harvester
     	//也能支持远程reserve采矿
     	let outsourcingSupports = [{room:'W15S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1},
-    				{room:'W14S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1, targetObj:'5bbcac1c9099fc012e634f48',passThroughRoom:'W15S17'}];
+    				{room:'W14S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1, targetObj:'5bbcac1c9099fc012e634f48',passThroughRoom:'W15S17'},
+    				{room:'W14S18',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:0}];
     	
     	const worker200 = [WORK,CARRY,MOVE];
     	const worker400 = [WORK,WORK,CARRY,CARRY,MOVE,MOVE];
@@ -61,30 +62,37 @@ var autoCreateCreeps = {
         //TODO reserve room的防御者，只要比1000血的invader强点就行了
     	//单个还可以对付，遇到5个，1混合3治疗1远程组合就被堵门了
     	if(Game.rooms['W15S17']&&Game.rooms['W15S17'].memory.threatLevel>0
-    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<2){
+    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<3){
     		if(Game.rooms['W15S17'].memory.threatLevel>4){
     			//TODO 最好是刷一个近战远程混合怪
-    			Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } );
+    			Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } );
     		}
     		else{
-    			Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } );
+    			Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W15S17'} } );
     		}
     	}
     	else if(Game.rooms['W14S17']&&Game.rooms['W14S17'].memory.threatLevel>0
-    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<2){
+    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<3){
     		if(Game.rooms['W15S17'].memory.threatLevel>4){
     			//TODO 最好是刷一个近战远程混合怪
-    			Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+    			Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
     		}
     		else{
-    			Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+    			Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
     		}
     	}
     	
-    	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<1){
-            Game.spawns['Spawn1'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+    	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker' && creep.memory.target=='W14S17').length<1){
+            Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
+        }
+    	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker' && creep.memory.target=='W14S18').length<1){
+            Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S18'} } );
         }
     	
+    	if(!Game.rooms['W14S18'].controller.my && (Game.rooms['W14S18'].controller.upgradeBlocked==undefined||Game.rooms['W14S18'].controller.upgradeBlocked<200) && _.filter(Game.creeps, (creep) => creep.memory.role == 'claimer' && creep.memory.target=='W14S18').length<1){
+    		Game.spawns['Spawn3'].spawnCreep(  [CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE],'Claimer'+Game.time,{ memory: { role: 'claimer',  target: 'W14S18',oper:'claim' } } );
+    		console.log('tryToDowngrade');
+    	}
     	
     	for(let name in Game.rooms){
     		const room = Game.rooms[name];

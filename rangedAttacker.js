@@ -49,12 +49,10 @@ var roleRangedAttacker = {
 	        	creep.moveTo(exit);
     		}
     		else{
-    			if(!creepUtil.concentrateToFlag(creep,COLOR_RED)){
-    				//TODO 避免挡路，需要更好的写法
-        			creep.move(TOP);
-    			}
+    			creepUtil.concentrateToFlag(creep,COLOR_RED);
     		}
     	}
+    	
     }
 };
 

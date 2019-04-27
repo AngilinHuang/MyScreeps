@@ -5,10 +5,10 @@ var creepUtil = require('creepUtil');
  * 拆迁
  * dismantle射程为1，每个work部件50伤害
  * 
- * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE],'Unraveler'+Game.time,{ memory: { role: 'unraveler', target: 'W14S18'} } )
- * 6work=600
+ * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE],'Unraveler'+Game.time,{ memory: { role: 'unraveler', target: 'W14S18'} } )
+ * 20work=2000
  * 4tough=40 
- * 10move=500
+ * 24move=1200
  * 
  * 行动优先级
  * 如果有passThroughRoom，会先进入passThroughRoom
@@ -81,7 +81,7 @@ var roleUnraveler = {
 		
 		target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,{
             filter: (structure) => {
-                return structure.structureType != STRUCTURE_WAL && structure.structureType != STRUCTURE_ROAD;
+                return structure.structureType != STRUCTURE_WALL && structure.structureType != STRUCTURE_ROAD;
 	        }
 	    });
 		if(target) {
@@ -90,6 +90,8 @@ var roleUnraveler = {
 		    }
 		    return;
 		}
+		
+		creepUtil.concentrateToFlag(creep,COLOR_YELLOW);
     }
 };
 
