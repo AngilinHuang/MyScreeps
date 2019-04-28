@@ -60,66 +60,33 @@ var creepUtil = {
      */
 	harvestClosestEnergy: function(creep){
 		const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
-		const returnValue = creep.harvest(source);
-		if(returnValue == ERR_NOT_IN_RANGE) {
-		    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
-		}
-		else if(returnValue!=OK && returnValue!=ERR_BUSY){
-			console.log(creep.name+' harvest error. returnValue='+returnValue);
+		if(source){
+			const returnValue = creep.harvest(source);
+			if(returnValue == ERR_NOT_IN_RANGE) {
+			    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+			}
+			else if(returnValue!=OK && returnValue!=ERR_BUSY){
+				console.log(creep.name+' harvest error. returnValue='+returnValue);
+			}
 		}
 	},
-	getEnergyFromStorage: function(creep){
-		const target = creep.pos.findInRange(FIND_STRUCTURES,4,{
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
-                     ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
-                    ;
-	            }
-	    });
-		if(target && target.length>0){
-			if(creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(target[0], {visualizePathStyle: {stroke: '#ffffff'}});
-			}
-			return true;
-		}
-		else{
-			if(creep.room.memory.linkStorage && (creep.room.memory.linkFroms!=undefined && creep.room.memory.linkFroms.length>0)){
-				const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
-				if(linkStorage && linkStorage.energy>600){
-					if(creep.withdraw(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-						creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
-					}
-					return true;
-				}
-			}
-			else if(creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY]>0){
-				if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: '#ffffff'}});
-				}
-				return true;
-			}
-		}
-		return false;
-	},
-	//从4格内有能量的link,storage,container中获取能量（适用于harverster以外的工人）
+	//从距离最近的link,storage,container中获取能量（适用于harverster以外的工人）
 	getEnergyFromClosestStructure: function(creep){
-		const target = creep.pos.findInRange(FIND_STRUCTURES,4,{
+		const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_LINK && structure.energy >0)
-                     ||(structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
-                     ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
+                	||(structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
+                    ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
                     ;
 	            }
 	    });
-		if(target && target.length>0){
-			if(creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(target[0], {visualizePathStyle: {stroke: '#ffffff'}});
+		if(target){
+			if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
 			}
 			return true;
 		}
-		else{
-			return false;
-		}
+		return false;
 	},
 	//从房间中的有能量的墓碑获取能量
 	harvestTombstone: function(creep){
@@ -239,7 +206,6 @@ var creepUtil = {
         }
     },
     //为spawn和extension和tower供能
-    //如果仓库旁的link能量过低，为其供能
     transferEnergyToFunctionalStructure: function(creep){
     	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -258,15 +224,6 @@ var creepUtil = {
 	        return true;
 	    }
 	    else{
-	    	if(creep.room.memory.linkStorage){
-				const linkStorage = Game.getObjectById(creep.room.memory.linkStorage);
-				if(linkStorage && linkStorage.energy<450){
-					if(creep.transfer(linkStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-			            creep.moveTo(linkStorage, {visualizePathStyle: {stroke: '#ffffff'}});
-			        }
-			        return true;
-				}
-			}
 	    	return false;
 	    }
     },

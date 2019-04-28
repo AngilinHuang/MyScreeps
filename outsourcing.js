@@ -18,7 +18,7 @@ var roleOutsourcing = {
     	
     	
     	if(creep.carry.energy < creep.carryCapacity){
-    		creepUtil.getEnergyFromStorage(creep);
+    		creepUtil.getEnergyFromClosestStructure(creep);
     	}
     	else{
     		const targetRoom = creep.memory.target;

@@ -14,6 +14,8 @@ var roleRangedAttacker = require('rangedAttacker');
 var roleExtracter = require('extracter');
 var roleUnraveler = require('unraveler');
 var roleHydra = require('hydra');
+var roleBehemoth = require('behemoth');
+var roleWarCharger = require('warCharger');
 
 module.exports.loop = function () {
 
@@ -57,44 +59,51 @@ module.exports.loop = function () {
     //给各个creep分配工作
     for(let name in Game.creeps) {
     	const creep = Game.creeps[name];
-        if(creep.memory.role == 'harvester') {
+    	const role = creep.memory.role;
+        if(role == 'harvester') {
             roleHarvester.run(creep);
         }
-        if(creep.memory.role == 'upgrader') {
+        if(role == 'upgrader') {
             roleUpgrader.run(creep);
         }
-        if(creep.memory.role == 'builder') {
+        if(role == 'builder') {
             roleBuilder.run(creep);
         }
         if(creep.memory.role == 'repairer') {
             roleRepairer.run(creep);
         }
-        if(creep.memory.role == 'claimer') {
+        if(role == 'claimer') {
         	roleClaimer.run(creep);
         }
-        if(creep.memory.role == 'carrier') {
+        if(role == 'carrier') {
         	roleCarrier.run(creep);
         }
-        if(creep.memory.role == 'outsourcing') {
+        if(role == 'outsourcing') {
         	roleOutsourcing.run(creep);
         }
-        if(creep.memory.role == 'reserveHarvester') {
+        if(role == 'reserveHarvester') {
         	roleReserveHarvester.run(creep);
         }
-        if(creep.memory.role == 'meleeAttacker') {
+        if(role == 'meleeAttacker') {
         	roleMeleeAttacker.run(creep);
         }
-        if(creep.memory.role == 'rangedAttacker') {
+        if(role == 'rangedAttacker') {
         	roleRangedAttacker.run(creep);
         }
-        if(creep.memory.role == 'extracter') {
+        if(role == 'extracter') {
         	roleExtracter.run(creep);
         }
-        if(creep.memory.role == 'unraveler') {
+        if(role == 'unraveler') {
         	roleUnraveler.run(creep);
         }
-        if(creep.memory.role == 'hydra') {
+        if(role == 'hydra') {
         	roleHydra.run(creep);
+        }
+        if(role == 'behemoth') {
+        	roleBehemoth.run(creep);
+        }
+        if(role == 'warCharger') {
+        	roleWarCharger.run(creep);
         }
     }
 }

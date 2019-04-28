@@ -10,7 +10,7 @@ var creepUtil = require('creepUtil');
  * 4、升级当前房间的room controller
  * 采集优先级
  * 1、如果房间内有tombstone存在且有能量，从tombstone采集能量
- * 2、从距离4格内的link、container、storage获取能量
+ * 2、从最近的有能量的link、container、storage获取能量
  * 3、从当前房间内最近的有能量的source采集
  * 
  */
@@ -41,7 +41,7 @@ var roleRepairer = {
         	wallHitsLimit = 100000;
         }
         else if(creep.room.controller.level==7){
-        	wallHitsLimit = 200000;
+        	wallHitsLimit = 300000;
         }
         else if(creep.room.controller.level==8){
         	wallHitsLimit = 1000000;

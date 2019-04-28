@@ -3,8 +3,9 @@ var creepUtil = require('creepUtil');
 /*
  * harvester功能
  * 工作优先级
- * 1、如果3格内有link或storage或container，将能量放入该建筑
- * 2、用能量填满房间内最近的spawn，extension，tower，storage
+ * 1、如果1格内有link，将能量放入该建筑
+ * 2、如果2格内有link或storage或container，将能量放入该建筑
+ * 3、用能量填满房间内最近的spawn，extension，tower，storage
  * 采集优先级
  * 1、从3格内有能量的tombstone获取能量
  * 2、从指定source采集（配合autoCreateCreep的为能量点平均分配harvester功能，目前设置为采光指定能量点后不会跑去另一个采集点）
@@ -52,7 +53,7 @@ var roleHarvester = {
                 }
         	});
         	if(!targets||targets.length==0){
-        		targets = creep.pos.findInRange(FIND_STRUCTURES, 3, {
+        		targets = creep.pos.findInRange(FIND_STRUCTURES, 2, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_LINK &&
                             structure.energy < structure.energyCapacity)

@@ -81,7 +81,7 @@ var roleUnraveler = {
 		
 		target = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,{
             filter: (structure) => {
-                return structure.structureType != STRUCTURE_WALL && structure.structureType != STRUCTURE_ROAD;
+                return structure.structureType != STRUCTURE_WALL && structure.structureType != STRUCTURE_ROAD && structure.structureType != STRUCTURE_CONTAINER;
 	        }
 	    });
 		if(target) {
