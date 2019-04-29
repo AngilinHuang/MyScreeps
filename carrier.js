@@ -71,6 +71,14 @@ var roleCarrier = {
         			}
         		}
     		}
+    		else{
+    		    transportArray.push(target);
+        	    creep.memory.transportList= transportArray.join(";");
+    		}
+    	}
+    	else{
+    	    transportArray.push(target);
+        	creep.memory.transportList= transportArray.join(";");
     	}
     }
 };
