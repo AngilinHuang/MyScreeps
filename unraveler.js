@@ -5,10 +5,10 @@ var creepUtil = require('creepUtil');
  * 拆迁
  * dismantle射程为1，每个work部件50伤害
  * 
- * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE],'Unraveler'+Game.time,{ memory: { role: 'unraveler', target: 'W14S18'} } )
- * 20work=2000
- * 4tough=40 
- * 24move=1200
+ * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE],'Unraveler'+Game.time,{ memory: { role: 'unraveler', target: 'W14S18'} } );
+ * 20work=2000        1000伤害
+ * 5tough=50 
+ * 25move=1350
  * 
  * 行动优先级
  * 如果有passThroughRoom，会先进入passThroughRoom
@@ -18,7 +18,7 @@ var creepUtil = require('creepUtil');
  * 指定的targetObj，一般是墙或rampart
  * 房间内最近的敌方tower
  * 房间内最近的敌方spawn
- * 房间内最近的敌方的墙和路以外的建筑
+ * 房间内最近的敌方的墙和路和controller和container以外的建筑
  * 
  */
 var roleUnraveler = {
@@ -66,6 +66,15 @@ var roleUnraveler = {
 		if(target) {
 		    if(creep.dismantle(target) == ERR_NOT_IN_RANGE) {
 		        creep.moveTo(target);
+		        //攻击近距离的其他敌方建筑，避免对方用extension给tower挡路
+		        let closestTarget = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,{
+		            filter: (structure) => {
+		                return structure.structureType != STRUCTURE_WALL && structure.structureType != STRUCTURE_ROAD && structure.structureType != STRUCTURE_CONTROLLER && structure.structureType != STRUCTURE_CONTAINER  && structure.structureType != STRUCTURE_POWER_BANK;
+			        }
+			    });
+		        if(closestTarget && closestTarget.pos.isNearTo(creep)){
+		        	creep.dismantle(closestTarget);
+		        }
 		    }
 		    return;
 		}

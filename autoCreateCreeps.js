@@ -13,8 +13,8 @@ var autoCreateCreeps = {
     	//使用outsourcing远程支持新占房间时，优先发送upgrader和builder，等到基建完成后再发送harvester
     	//也能支持远程reserve采矿
     	let outsourcingSupports = [{room:'W15S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1},
-    				{room:'W14S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1, targetObj:'5bbcac1c9099fc012e634f48',passThroughRoom:'W15S17'},
-    				{room:'W14S18',builderCount:0,upgraderCount:2,harvesterCount:2,repairCount:0,reserveHarvesterCount:0}];
+    				//{room:'W16S19',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:1,reserveHarvesterCount:0},
+    				{room:'W14S17',builderCount:0,upgraderCount:0,harvesterCount:0,repairCount:0,reserveHarvesterCount:1, targetObj:'5bbcac1c9099fc012e634f48',passThroughRoom:'W15S17'}];
     	
     	const worker200 = [WORK,CARRY,MOVE];
     	const worker400 = [WORK,WORK,CARRY,CARRY,MOVE,MOVE];
@@ -45,26 +45,20 @@ var autoCreateCreeps = {
     	const extracter650 = [WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE];
     	
     	//carrier列表
-    	const carriers = [{room:'W15S18',dangerRooms:['W15S17'],routeId:1, template:carrier900, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
-    		{room:'W15S18',dangerRooms:['W15S17'],routeId:5, template:carrier900, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
+    	const carriers = [{creater:'W15S18',dangerRooms:['W15S17'],routeId:1, template:carrier900, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
+    		{creater:'W15S18',dangerRooms:['W15S17'],routeId:5, template:carrier900, transportList: '5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
     		//{room:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
-    		{room:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
+    		{creater:'W15S19',routeId:2, template:carrier900, transportList: '5cb0071ada070a2778f620a0,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
     		//{room:'W15S19',routeId:6, template:carrier750, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY},
-    	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:3, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
-    	{room:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:4, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
-    	{room:'W14S18',routeId:11, template:carrier600, transportList: '5cc2780a95b2866f3ed661c5,0,'+RESOURCE_ENERGY+';5cc272fe13273060b6703f49,0,'+RESOURCE_ENERGY+';5cc51831cc2ca95814ba2db5,1,'+RESOURCE_ENERGY},
-    	{room:'W14S18',routeId:12, template:carrier600, transportList: '5cc272fe13273060b6703f49,0,'+RESOURCE_ENERGY+';5cc2780a95b2866f3ed661c5,0,'+RESOURCE_ENERGY+';5cc51831cc2ca95814ba2db5,1,'+RESOURCE_ENERGY},
-    	{room:'W14S18',routeId:13, template:carrier450, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cc51831cc2ca95814ba2db5,1,'+RESOURCE_ENERGY}];
-    	//W15S18向W15S19的storage运输能量
-    	//{room:'W15S19',routeId:10, template:carrier900, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cb0071ada070a2778f620a0,1,'+RESOURCE_ENERGY}
-    	//W15S18向W15S19补充能量路线
-    	//{room:'W15S19',routeId:10, template:carrier900, transportList: '5cab85e10fe2d22e2511d281,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY+';5cb08bc98302927d5668682a,0,'+RESOURCE_ENERGY+';5cb1f50dd2382c205cbc7b58,1,'+RESOURCE_ENERGY}
-    	//旧路线W15S19
+    	{creater:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:3, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
+    	{creater:'W15S18',dangerRooms:['W15S17','W14S17'],routeId:4, template:carrier1050, transportList: '5cb2d28b92df111cb6edfa19,0,'+RESOURCE_ENERGY+';5cb1e66385230e4f50b25fe9,0,'+RESOURCE_ENERGY+';5cb21615a19b4a7d5c85073c,1,'+RESOURCE_ENERGY+';5cab85e10fe2d22e2511d281,1,'+RESOURCE_ENERGY},
+    	{creater:'W14S18',routeId:11, template:carrier600, transportList: '5cc5f263b0dbe0249c8d0d0c,0,'+RESOURCE_ENERGY+';5cc51831cc2ca95814ba2db5,1,'+RESOURCE_ENERGY}];
+    	
     	
     	
     	//clamers列表，主要用于reserve
-    	const claimers = [{template:claimer1300, target: 'W15S17', oper:'reserve' },
-    		{template:claimer1300, target: 'W14S17', oper:'reserve' ,passThroughRoom:'W15S17'}];
+    	const claimers = [{creater:'W15S18',template:claimer1300, target: 'W15S17', oper:'reserve' },
+    		{creater:'W15S18',template:claimer1300, target: 'W14S17', oper:'reserve' ,passThroughRoom:'W15S17'}];
    
         //TODO reserve room的防御者，只要比1000血的invader强点就行了
     	//单个还可以对付，遇到5个，1混合3治疗1远程组合就被堵门了
@@ -79,7 +73,7 @@ var autoCreateCreeps = {
     		}
     	}
     	else if(Game.rooms['W14S17']&&Game.rooms['W14S17'].memory.threatLevel>0
-    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<2){
+    			&& _.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker').length<3){
     		if(Game.rooms['W15S17'].memory.threatLevel>4){
     			//TODO 最好是刷一个近战远程混合怪
     			Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender560,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
@@ -92,13 +86,21 @@ var autoCreateCreeps = {
     	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker' && creep.memory.target=='W14S17').length<1){
             Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S17', passThroughRoom: 'W15S17'} } );
         }
+    	if(_.filter(Game.creeps, (creep) => creep.memory.role == 'meleeAttacker' && creep.memory.target=='W16S19').length<1){
+            Game.spawns['Spawn3'].spawnCreep( reserveRoomDefender,'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W16S19'} } );
+        }
     	
-//    	if(!Game.rooms['W14S18'].controller.my && (Game.rooms['W14S18'].controller.upgradeBlocked==undefined||Game.rooms['W14S18'].controller.upgradeBlocked<200) && _.filter(Game.creeps, (creep) => creep.memory.role == 'claimer' && creep.memory.target=='W14S18').length<1){
-//    		Game.spawns['Spawn3'].spawnCreep(  [CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE],'Claimer'+Game.time,{ memory: { role: 'claimer',  target: 'W14S18',oper:'claim' } } );
-//    		console.log('tryToDowngrade');
-//    	}
+    	if(Game.rooms['W16S19'] && !Game.rooms['W16S19'].controller.my && (Game.rooms['W16S19'].controller.upgradeBlocked==undefined||Game.rooms['W16S19'].controller.upgradeBlocked<300) && _.filter(Game.creeps, (creep) => creep.memory.role == 'claimer' && creep.memory.target=='W16S19').length<1){
+    		Game.spawns['Spawn3'].spawnCreep(  [CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE,CLAIM,MOVE],'Claimer'+Game.time,{ memory: { role: 'claimer',  target: 'W16S19',oper:'claim' } } );
+    		console.log('tryToDowngrade');
+    	}
     	
     	for(let name in Game.rooms){
+    		
+//    		if(name=='W15S18'||name=='W15S19'){
+//    			continue;
+//    		}
+    		
     		const room = Game.rooms[name];
     		const spawns = room.find(FIND_MY_SPAWNS);
     		//console.log(name+' spawnsCount='+spawns.length);
@@ -142,7 +144,7 @@ var autoCreateCreeps = {
     				repairCount = 0;
     			}
     			else if(room.controller.level==3 || room.controller.level==4){
-    				harvesterCount = 0;
+    				harvesterCount = 2;
     				upgraderCount = 0;
     				builderCount = 1;
     				repairCount = 1;
@@ -335,7 +337,7 @@ var autoCreateCreeps = {
     	        	if(carriers.length>currentCarriers.length){
     	        		for(let i=0;i<carriers.length;i++){
     	        			const carrier = carriers[i];
-    	        			if(carrier.room!=name){
+    	        			if(carrier.creater!=name){
     	        				continue;
     	        			}
     	        			let isExisted = false;
@@ -372,6 +374,9 @@ var autoCreateCreeps = {
     	        	if(claimers.length> currentClaimers.length){
     	        		for(let i=0;i<claimers.length;i++){
     	        			const claimer = claimers[i];
+    	        			if(claimer.creater!=name){
+    	        				continue;
+    	        			}
     	        			let isExisted = false;
     	        			for(let j=0;j<currentClaimers.length;j++){
     	        				const currentClaimer = currentClaimers[j];
@@ -384,7 +389,7 @@ var autoCreateCreeps = {
     	        				const target = claimer.target;
     	        				//当目标房间受到敌人入侵时停止建造
     	        	        	if(!(Game.rooms[target] && Game.rooms[target].memory.threatLevel!=undefined && Game.rooms[target].memory.threatLevel>0)){
-    	        	        		if(!Game.rooms[target] || Game.rooms[target].controller.reservation.ticksToEnd<3000){
+    	        	        		if(!Game.rooms[target] || Game.rooms[target].controller.reservation.ticksToEnd<4000){
             	        				vacantSpawn.spawnCreep( claimer.template,'Claimer'+Game.time,{ memory: { role: 'claimer', target: claimer.target,oper:claimer.oper, passThroughRoom:claimer.passThroughRoom } } );
             	        				continue;
             	        			}

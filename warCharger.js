@@ -9,6 +9,8 @@ var creepUtil = require('creepUtil');
  * 采集优先级
  * 1、从最近的link，container，storage获得能量
  * 
+ * Game.spawns['Spawn3'].spawnCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE],'WarCharger'+Game.time,{memory: {role: 'warCharger', room:'W15S18'}});
+ * 
  */
 var roleWarCharger = {
 

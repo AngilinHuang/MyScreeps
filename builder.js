@@ -15,9 +15,7 @@ var creepUtil = require('creepUtil');
 var roleBuilder = {
 
     run: function(creep) {
-    	if(creepUtil.evadeHostiles(creep)){
-    		return;
-    	}
+
     	if(!creepUtil.checkRoom(creep)){
     		return;
     	}

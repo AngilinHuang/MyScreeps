@@ -5,7 +5,12 @@ var creepUtil = require('creepUtil');
 /*
  * behemoth功能
  * 
- * 肉盾
+ * 肉盾，有部分攻击和远程攻击能力来驱散无武装敌人
+ * 
+ * 7级基地5600能量上限，8级基地12900能量上限
+ * 
+ * 50部件限制
+ * Game.spawns['Spawn1'].spawnCreep(  [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,MOVE,ATTACK,MOVE,MOVE],'Behemoth'+Game.time,{ memory: { role: 'behemoth', target: 'W16S20',  passThroughRoom:'W15S20'} });
  * 
  * 
  */

@@ -9,7 +9,7 @@ var creepUtil = require('creepUtil');
  * 3、朝着targetRoom前进
  * 4、朝着红色flag移动
  * 
- * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE],'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S18'} } )
+ * Game.spawns['Spawn1'].spawnCreep( [TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE],'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'W14S18'} });
  * 
  */
 var roleMeleeAttacker = {

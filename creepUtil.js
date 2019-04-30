@@ -30,6 +30,7 @@ var creepUtil = {
     },
     
     //工作单位回避敌人
+    //为塔和spawn充能的单位不要加该限制
     evadeHostiles: function(creep){
     	//当前房间遭到入侵后再进行计算
     	if(creep.room.memory.threatLevel!=undefined && creep.room.memory.threatLevel>0){
