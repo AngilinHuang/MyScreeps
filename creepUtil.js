@@ -89,52 +89,50 @@ var creepUtil = {
 		}
 		return false;
 	},
-	//从房间中的有能量的墓碑获取能量
+	//从房间中的远距离墓碑中获取能量和矿物
 	harvestTombstone: function(creep){
 		const tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES);
-		if(tombstone && tombstone.store[RESOURCE_ENERGY]>0){
-			if(creep.withdraw(tombstone, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-			    creep.moveTo(tombstone);
-			}
+		if(tombstone &&  _.sum(tombstones[0].store)>0){
+			for(let resourceType in tombstones[0].store) {
+				if(creep.withdraw(tombstones[0], resourceType) == ERR_NOT_IN_RANGE) {
+	                creep.moveTo(tombstones[0], {visualizePathStyle: {stroke: '#ffffff'}});
+	                return;
+	            }
+	    	}
 			return true;
 		}
 		else{
 			//dropped resource要用pickup命令拾取
-			//const target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
-			/*if(target) {
+			const target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+			if(target) {
 			    if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
 			        creep.moveTo(target);
 			    }
-			}*/
-			
-			/*const dropedSource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
-			//Game.getObjectById('5caeb0b40a0b387d36a6f7fc').pos.findClosestByRange(FIND_DROPPED_RESOURCES);
-			//Game.getObjectById('5caeb0b40a0b387d36a6f7fc').withdraw(Game.getObjectById('5caeb0b40a0b387d36a6f7fc').pos.findClosestByRange(FIND_DROPPED_RESOURCES), RESOURCE_ENERGY)
-			报错-7，不能这么用，那看来drop资源只能用container捡了
-			if(dropedSource && dropedSource.energy>0){
-				if(creep.withdraw(dropedSource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				    creep.moveTo(dropedSource);
-				}
-				return true;
+			    return true;
 			}
-			else{*/
-				return false;
-			//}
+			return false;
 		}
 	},
 	//从2格内的有能量的墓碑获取能量（适用于所有使用能量的工人）
 	harvestNearbyTombstone: function(creep){
 		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 2);
 		if(tombstones.length>0 && tombstones[0].store[RESOURCE_ENERGY]>0){
-			if(creep.withdraw(tombstones[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+			const returnValue = creep.withdraw(tombstones[0], RESOURCE_ENERGY);
+			if(returnValue == ERR_NOT_IN_RANGE) {
 			    creep.moveTo(tombstones[0]);
 			}
+			else if(returnValue == OK || returnValue == ERR_BUSY){
+		    	return true;
+		    }
+		    else {
+		    	console.log(creep.name + ' withdraw tombstone error. returnValue='+returnValue);
+		    }
 			return true;
 		}
 		else{
 			//FIND_DROPPED_ENERGY即将被移除，需要用FIND_DROPPED_RESOURCES替代
-			/*const droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 2);
-			if(droppedEnergy.length>0) {
+			const droppedEnergy = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 2);
+			if(droppedEnergy.length>0 && droppedEnergy[0].energy>0) {
 				const returnValue = creep.pickup(droppedEnergy[0]);
 			    if(returnValue == ERR_NOT_IN_RANGE) {
 			        creep.moveTo(droppedEnergy[0]);
@@ -146,7 +144,7 @@ var creepUtil = {
 			    else {
 			    	console.log(creep.name + ' pickup error. returnValue='+returnValue);
 			    }
-			}*/
+			}
 			return false;
 		}
 	},
@@ -166,6 +164,20 @@ var creepUtil = {
 			return true;
 		}
 		else{
+			const droppedResources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 2);
+			if(droppedResources.length>0 && droppedResources[0].energy==0) {
+				const returnValue = creep.pickup(droppedResources[0]);
+			    if(returnValue == ERR_NOT_IN_RANGE) {
+			        creep.moveTo(droppedResources[0]);
+			        return true;
+			    }
+			    else if(returnValue == OK || returnValue == ERR_BUSY){
+			    	return true;
+			    }
+			    else {
+			    	console.log(creep.name + ' pickup error. returnValue='+returnValue);
+			    }
+			}
 			return false;
 		}
 	},
@@ -194,17 +206,27 @@ var creepUtil = {
     },
     
     tryToBuild: function(creep){
-    	//从最近的建造点开始建造
-    	var target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-        if(target) {
-            if(creep.build(target) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+    	//建造rampart后把血量抬到500
+    	const targets = creep.pos.findInRange(FIND_STRUCTURES, 4, {filter: (structure) => structure.hits < 500 && structure.structureType==STRUCTURE_RAMPART});
+    	if(targets && targets.length>0) {
+            if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
             }
             return true;
         }
-        else{
-        	return false;
-        }
+    	else{
+    		//从最近的建造点开始建造
+        	const target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+            if(target) {
+                if(creep.build(target) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+                return true;
+            }
+            else{
+            	return false;
+            }
+    	}
     },
     //为spawn和extension和tower供能
     transferEnergyToFunctionalStructure: function(creep){
