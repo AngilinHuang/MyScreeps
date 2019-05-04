@@ -4,12 +4,13 @@ var creepUtil = require('creepUtil');
 /*
  * repairer功能
  * 工作优先级
- * 1、修理除了墙和rampart以外的血量不满70%的建筑到满血
- * 2、修理墙和rampart的血量到wallHitsLimit（最低100K，随着room controller等级的提高而提高）
- * 3、为spawn，extension，tower供能
- * 4、升级当前房间的room controller
+ * 1、如果creep携带了非能量资源，将资源交给storage，没有storage则交给最近的container
+ * 2、修理除了墙和rampart以外的血量不满70%的建筑到满血
+ * 3、修理墙和rampart的血量到wallHitsLimit（最低100K，随着room controller等级的提高而提高）
+ * 4、为spawn，extension，tower供能
+ * 5、升级当前房间的room controller
  * 采集优先级
- * 1、如果房间内有tombstone存在且有能量，从tombstone采集能量
+ * 1、如果房间内有tombstone存在且有资源，从tombstone采集资源（优先采集非能量资源）
  * 2、从最近的有能量的link、container、storage获取能量
  * 3、从当前房间内最近的有能量的source采集
  * 
@@ -17,19 +18,18 @@ var creepUtil = require('creepUtil');
 var roleRepairer = {
 
     run: function(creep) {
-    	if(creepUtil.evadeHostiles(creep)){
-    		return;
-    	}
+
     	if(!creepUtil.checkRoom(creep)){
     		return;
     	}
     	
-        if(creep.memory.repairing && creep.carry.energy == 0) {
+        if(creep.memory.repairing && _.sum(creep.carry) == 0) {
             creep.memory.repairing = false;
         }
-        if(!creep.memory.repairing && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.repairing && _.sum(creep.carry) == creep.carryCapacity) {
             creep.memory.repairing = true;
         }
+        //console.log(creep.name+' creep.memory.repairing is '+creep.memory.repairing);
         
         //100K  cost 1K energy
         let wallHitsLimit = 100000;
@@ -38,22 +38,47 @@ var roleRepairer = {
         	wallHitsLimit = 100000;
         }
         else if(creep.room.controller.level==6){
-        	wallHitsLimit = 100000;
+        	wallHitsLimit = 500000;
         }
         else if(creep.room.controller.level==7){
-        	wallHitsLimit = 300000;
+        	//1M，期望8M，剩余部分靠wallRepairer补足
+        	wallHitsLimit = 1000000;
         }
         else if(creep.room.controller.level==8){
-        	wallHitsLimit = 1000000;
+        	//10M
+        	wallHitsLimit = 10000000;
         }
 
         if(creep.memory.repairing) {
+        	//如果拾取了矿物资源，交给storage，如果没有storage则交给最近的container
+        	if(_.sum(creep.carry)!=creep.carry.energy){
+        		let target = creep.room.storage;
+        		if(!target){
+        			target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_CONTAINER &&
+                                	_.sum(structure.store)<structure.storeCapacity);
+                        }
+                	});
+        		}
+                if(target) {
+                	for(let resourceType in creep.carry) {
+                		if(creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});                          
+                        }
+                	}
+                	return;
+                }
+        	}
+        	
+        	
         	let target;
         	let targetId = creep.memory.targetId;
+        	
         	if(targetId!=undefined && Game.getObjectById(targetId)!=undefined){
         		const memoryTarget = Game.getObjectById(targetId);
         		if((memoryTarget.hits < memoryTarget.hitsMax
-        			&& memoryTarget.structureType!=STRUCTURE_RAMPART)
+        			&& memoryTarget.structureType!=STRUCTURE_RAMPART && memoryTarget.structureType!=STRUCTURE_WALL)
         			||(memoryTarget.hits < (wallHitsLimit+10000)
         			&& memoryTarget.structureType==STRUCTURE_RAMPART)){
         			target = Game.getObjectById(targetId);
@@ -86,8 +111,10 @@ var roleRepairer = {
                     }
                 }
             	else{
-            		if(!creepUtil.transferEnergyToSpawnAndTower(creep)){
-            			creepUtil.tryToUpgrade(creep);
+            		if(!creepUtil.harvestNearbyTombstone(creep)){
+	            		if(!creepUtil.transferEnergyToSpawnAndTower(creep)){
+	            			creepUtil.tryToUpgrade(creep);
+	            		}
             		}
             	}
             }

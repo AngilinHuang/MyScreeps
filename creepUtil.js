@@ -49,7 +49,7 @@ var creepUtil = {
     /**
      * 采集最近的资源，FIND_SOURCES_ACTIVE 比 FIND_SOURCES 多了条件 {filter: (source) => source.energy>0}
      * 
-     * OK	0	The operation has been scheduled successfully.
+     * harvest returnValue
 	    ERR_NOT_OWNER	-1	You are not the owner of this creep, or the room controller is owned or reserved by another player.
 		ERR_BUSY	-4	The creep is still being spawned.
 		ERR_NOT_FOUND	-5	Extractor not found. You must build an extractor structure to harvest minerals. Learn more
@@ -89,26 +89,79 @@ var creepUtil = {
 		}
 		return false;
 	},
-	//从房间中的远距离墓碑中获取能量和矿物
+	/**
+	 * 从房间中的远距离墓碑或掉落资源中获取能量和矿物
+	 * 优先拾取矿物
+	 * 
+	 * withdraw returnValue
+		ERR_NOT_OWNER	-1	You are not the owner of this creep, or there is a hostile rampart on top of the target.
+		ERR_BUSY	-4	The creep is still being spawned.		
+		ERR_NOT_ENOUGH_RESOURCES	-6	The target does not have the given amount of resources.	
+		ERR_INVALID_TARGET	-7	The target is not a valid object which can contain the specified resource.
+		ERR_FULL	-8	The creep's carry is full.
+		ERR_NOT_IN_RANGE	-9	The target is too far away.
+		ERR_INVALID_ARGS	-10	The resourceType is not one of the RESOURCE_* constants, or the amount is incorrect.
+	 *
+	 * pickup returnValue
+		ERR_NOT_OWNER	-1	You are not the owner of this creep.
+		ERR_BUSY	-4	The power creep is not spawned in the world.
+		ERR_INVALID_TARGET	-7	The target is not a valid object to pick up.
+		ERR_FULL	-8	The creep cannot receive any more resource.
+		ERR_NOT_IN_RANGE	-9	The target is too far away.	
+	 */
 	harvestTombstone: function(creep){
 		const tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES);
-		if(tombstone &&  _.sum(tombstones[0].store)>0){
-			for(let resourceType in tombstones[0].store) {
-				if(creep.withdraw(tombstones[0], resourceType) == ERR_NOT_IN_RANGE) {
-	                creep.moveTo(tombstones[0], {visualizePathStyle: {stroke: '#ffffff'}});
-	                return;
-	            }
-	    	}
-			return true;
+		if(tombstone &&  _.sum(tombstone.store)>0){
+			if(_.sum(tombstone.store) == tombstone.store[RESOURCE_ENERGY]){
+				const returnValue = creep.withdraw(tombstone, RESOURCE_ENERGY);
+				if(returnValue == ERR_NOT_IN_RANGE) {
+				    creep.moveTo(tombstone);
+				}
+				else if(returnValue == OK || returnValue == ERR_BUSY){
+			    	return true;
+			    }
+			    else {
+			    	console.log(creep.name + ' withdraw tombstone engergy error. returnValue='+returnValue);
+			    	return false;
+			    }
+			}
+			else{
+				for(let resourceType in tombstone.store) {
+					if(resourceType == RESOURCE_ENERGY){
+						continue;
+					}
+				    let returnValue = creep.withdraw(tombstone, resourceType);
+					if(returnValue == ERR_NOT_IN_RANGE) {
+		                creep.moveTo(tombstone, {visualizePathStyle: {stroke: '#ffffff'}});
+		                return true;
+		            }
+		            else if(returnValue!=OK && returnValue != ERR_BUSY){
+				        console.log(creep.name + ' withdraw tombstone resource error. returnValue='+returnValue);
+				        return false;
+				    }
+				    else{
+				        return true;
+				    }
+		    	}
+			}
+			return false;
 		}
 		else{
 			//dropped resource要用pickup命令拾取
 			const target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
 			if(target) {
-			    if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
+			    const returnValue = creep.pickup(target);
+			    if(returnValue == ERR_NOT_IN_RANGE) {
 			        creep.moveTo(target);
+			        return true;
 			    }
-			    return true;
+			    else if(returnValue!=OK && returnValue != ERR_BUSY){
+			        console.log(creep.name + ' pickup error. returnValue='+returnValue);
+			        return false;
+			    }
+			    else{
+			        return true;
+			    }
 			}
 			return false;
 		}
@@ -126,8 +179,9 @@ var creepUtil = {
 		    }
 		    else {
 		    	console.log(creep.name + ' withdraw tombstone error. returnValue='+returnValue);
+		    	return false;
 		    }
-			return true;
+		    return false;
 		}
 		else{
 			//FIND_DROPPED_ENERGY即将被移除，需要用FIND_DROPPED_RESOURCES替代
@@ -143,6 +197,7 @@ var creepUtil = {
 			    }
 			    else {
 			    	console.log(creep.name + ' pickup error. returnValue='+returnValue);
+			    	return false;
 			    }
 			}
 			return false;
