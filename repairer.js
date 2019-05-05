@@ -111,10 +111,8 @@ var roleRepairer = {
                     }
                 }
             	else{
-            		if(!creepUtil.harvestNearbyTombstone(creep)){
-	            		if(!creepUtil.transferEnergyToSpawnAndTower(creep)){
-	            			creepUtil.tryToUpgrade(creep);
-	            		}
+            		if(!creepUtil.transferEnergyToSpawnAndTower(creep)){
+            			creepUtil.tryToUpgrade(creep);
             		}
             	}
             }
