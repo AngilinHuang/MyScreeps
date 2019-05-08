@@ -3,13 +3,13 @@ var creepUtil = require('creepUtil');
 /*
  * ReserveHarvester功能
  * 工作优先级
- * 1、修理60%血以下的container
- * 2、修理30%血以下的道路
- * 3、如果3格内有link或storage或container，将能量放入该建筑
- * 4、用能量填满房间内最近的spawn，extension，tower，storage
+ * 1、修理70%血以下的建筑
+ * 2、如果3格内有link或storage或container，将能量放入该建筑
+ * 3、用能量填满房间内最近的储能建筑
  * 采集优先级
  * 1、从3格内有能量的tombstone获取能量
- * 2、从当前房间内最近的有能量的source采集
+ * 2、如果指定了能量点，从指定能量点采集
+ * 3、从当前房间内最近的有能量的source采集
  * 
  */
 var roleReserveHarvester = {
@@ -37,9 +37,6 @@ var roleReserveHarvester = {
         				    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
         				}
         				return;
-        			}
-        			else{
-        				creepUtil.harvestClosestEnergy(creep);
         			}
         		}
         		else{

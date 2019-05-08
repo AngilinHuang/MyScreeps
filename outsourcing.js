@@ -9,6 +9,10 @@ var creepUtil = require('creepUtil');
  * memory.targetRole=在目标房间担任的角色
  * memory.targetObj=走到目标房间的指定位置后再变化为目标角色（可选参数，但推荐使用，防止房间出口过大时走到了不适合的位置）
  * 
+ * 
+ * 可以作为probe使用
+ * Game.spawns['Spawn2'].spawnCreep([MOVE],'Probe'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: 'E28S26', room:'E28S26' ,passThroughRoom:'E30S27'} } )
+ *    
  */
 var roleOutsourcing = {
     run: function(creep) {
@@ -58,12 +62,12 @@ var roleOutsourcing = {
     		else{
     			const targetRole = creep.memory.targetRole;
     			//如果是harvester且目标房间有2个能量点，将把harvester分配到不同的能量点
-    			if(targetRole=='harvester'){
+    			if(targetRole=='harvester' || targetRole=='reserveHarvester'){
     				const resources = creep.room.find(FIND_SOURCES);
         			if(resources.length>1){
         				let sourceId;
         				for(let i=0;i<resources.length;i++){
-    	    				let assignedResoureHarvester = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.room==targetRoom && creep.memory.sourceId == resources[i].id);
+    	    				let assignedResoureHarvester = _.filter(Game.creeps, (creep) => creep.memory.role == targetRole && creep.memory.room==targetRoom && creep.memory.sourceId == resources[i].id);
     	    				if(assignedResoureHarvester.length < 1){
     	    					sourceId = resources[i].id;
     	    					break;
