@@ -33,6 +33,18 @@ var roleClaimer = {
     			creep.memory.passThroughRoom = undefined;
     		}
     	}
+    	const targetObj = creep.memory.targetObj;
+    	//targetObj的问题在于没房间视野就获取不到这个房间的对象
+		if(targetObj){
+			const target = Game.getObjectById(targetObj);
+			if(target){
+				if(creep.pos.findInRange([target],4).length==0){
+					creep.moveTo(target);
+					return;
+				}
+			}
+			
+		}
     	
     	const targetRoom = creep.memory.target;
     	if(targetRoom){
