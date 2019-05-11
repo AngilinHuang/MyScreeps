@@ -16,6 +16,7 @@ var roleUnraveler = require('unraveler');
 var roleHydra = require('hydra');
 var roleBehemoth = require('behemoth');
 var roleWarCharger = require('warCharger');
+var roleWallRepairer = require('wallRepairer');
 
 module.exports.loop = function () {
 
@@ -24,6 +25,10 @@ module.exports.loop = function () {
         if(!Game.creeps[name]) {
             delete Memory.creeps[name];
         }
+    }
+    
+    if(Game.cpu.bucket<9500){
+        console.log('cpu limit access. bucket='+Game.cpu.bucket);
     }
     
     //room管理
@@ -104,6 +109,9 @@ module.exports.loop = function () {
         }
         if(role == 'warCharger') {
         	roleWarCharger.run(creep);
+        }
+        if(role == 'wallRepairer') {
+        	roleWallRepairer.run(creep);
         }
     }
 }

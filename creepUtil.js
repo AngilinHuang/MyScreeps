@@ -89,6 +89,19 @@ var creepUtil = {
 		}
 		return false;
 	},
+	//从storage获取能量，适用于wallRepairer等大容量creeps
+	getEnergyFromStorage: function(creep){
+		const target = creep.room.storage;
+		if(target && target.store[RESOURCE_ENERGY]>0){
+			if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+			}
+			return true;
+		}
+		else{
+			return false;
+		}
+	},
 	/**
 	 * 从房间中的远距离墓碑或掉落资源中获取能量和矿物
 	 * 优先拾取矿物
@@ -116,6 +129,7 @@ var creepUtil = {
 				const returnValue = creep.withdraw(tombstone, RESOURCE_ENERGY);
 				if(returnValue == ERR_NOT_IN_RANGE) {
 				    creep.moveTo(tombstone);
+				    return true;
 				}
 				else if(returnValue == OK || returnValue == ERR_BUSY){
 			    	return true;
@@ -124,6 +138,7 @@ var creepUtil = {
 			    	console.log(creep.name + ' withdraw tombstone engergy error. returnValue='+returnValue);
 			    	return false;
 			    }
+				return false;
 			}
 			else{
 				for(let resourceType in tombstone.store) {
@@ -166,13 +181,14 @@ var creepUtil = {
 			return false;
 		}
 	},
-	//从2格内的有能量的墓碑获取能量（适用于所有使用能量的工人）
+	//从3格内的有能量的墓碑获取能量（适用于所有使用能量的工人）
 	harvestNearbyTombstone: function(creep){
-		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 2);
+		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 3);
 		if(tombstones.length>0 && tombstones[0].store[RESOURCE_ENERGY]>0){
 			const returnValue = creep.withdraw(tombstones[0], RESOURCE_ENERGY);
 			if(returnValue == ERR_NOT_IN_RANGE) {
 			    creep.moveTo(tombstones[0]);
+			    return true;
 			}
 			else if(returnValue == OK || returnValue == ERR_BUSY){
 		    	return true;
@@ -185,7 +201,7 @@ var creepUtil = {
 		}
 		else{
 			//FIND_DROPPED_ENERGY即将被移除，需要用FIND_DROPPED_RESOURCES替代
-			const droppedEnergy = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 2);
+			const droppedEnergy = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3);
 			if(droppedEnergy.length>0 && droppedEnergy[0].energy>0) {
 				const returnValue = creep.pickup(droppedEnergy[0]);
 			    if(returnValue == ERR_NOT_IN_RANGE) {
