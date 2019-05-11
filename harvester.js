@@ -14,9 +14,7 @@ var creepUtil = require('creepUtil');
  */
 var roleHarvester = {
     run: function(creep) {
-    	if(creepUtil.evadeHostiles(creep)){
-    		return;
-    	}
+
     	if(!creepUtil.checkRoom(creep)){
     		return;
     	}
@@ -85,6 +83,9 @@ var roleHarvester = {
                 if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 }
+            }
+            else{
+            	creepUtil.tryToUpgrade(creep);
             }
         }
     }

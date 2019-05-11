@@ -13,9 +13,7 @@ var creepUtil = require('creepUtil');
 var roleUpgrader = {
 
     run: function(creep) {
-    	if(creepUtil.evadeHostiles(creep)){
-    		return;
-    	}
+
     	if(!creepUtil.checkRoom(creep)){
     		return;
     	}

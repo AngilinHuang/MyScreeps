@@ -10,9 +10,7 @@ var creepUtil = require('creepUtil');
  */
 var roleCarrier = {
     run: function(creep) {
-    	if(creepUtil.evadeHostiles(creep)){
-    		return;
-    	}
+
     	let transportList = creep.memory.transportList;
     	let transportArray = transportList.split(';');
     	
