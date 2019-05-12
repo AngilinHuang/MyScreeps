@@ -252,13 +252,12 @@ var autoCreateCreeps = {
     			    }
     			}
     			
-    			//通过是否有extractor和mineral储量来判断是否建造extracter
+    			//通过是否有extractor和mineral储量来判断是否建造extracter，在storage中包含300K该种矿物后停止建造extracter
     			if(room.controller.level>=6){
     				const extractor = room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_EXTRACTOR});
     				if(extractor){
     					const mineral = room.controller.pos.findClosestByRange(FIND_MINERALS);
-    					if(mineral && mineral.mineralAmount>0){
-    						//console.log('Room '+name+' mineralAmout='+mineral.mineralAmount);
+    					if(mineral && mineral.mineralAmount>0 && room.storage && (room.storage.store[mineral.mineralType]==undefined || room.storage.store[mineral.mineralType]<3000000)){
     						extracterCount = 1;
     					}
     				}
@@ -320,9 +319,13 @@ var autoCreateCreeps = {
 					upgraderCount = 2;
 					wallRepairerCount = 1;
 				}
+				if(name=='E27S26'){
+				    wallRepairerCount = 1;
+				}
 				if(name=='E28S26'){
 				    upgraderTemplate = upgrader1150;
 					builderCount = 2;
+					wallRepairerCount = 1;
 				}
 				if(name=='E28S25'){
 				    upgraderTemplate = upgrader1600;
@@ -331,6 +334,7 @@ var autoCreateCreeps = {
 				    upgraderTemplate = upgrader1600;
 				    upgraderCount = 2;
 					builderCount = 2;
+					wallRepairerCount = 1;
 				}
     			
     			const harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.room==name);
