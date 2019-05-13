@@ -299,7 +299,7 @@ var creepUtil = {
             }
     	}
     },
-    //为spawn和extension和tower供能
+    //为spawn和extension和tower供能，terminal保证10K能量储备
     transferEnergyToFunctionalStructure: function(creep){
     	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -308,6 +308,8 @@ var creepUtil = {
                 		structure.energy < structure.energyCapacity)
                     || (structure.structureType == STRUCTURE_TOWER &&
                     		structure.energy < 800)
+                    || (structure.structureType == STRUCTURE_TERMINAL &&
+                    		structure.store[RESOURCE_ENERGY] < 10000)
                     ;
 	            }
 	    });
