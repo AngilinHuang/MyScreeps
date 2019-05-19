@@ -62,6 +62,15 @@ var roleExtracter = {
         	if(targets && targets.length>0){
         		target = targets[0];
         	}
+        	else if(creep.room.terminal && _.sum(creep.room.terminal.store)<creep.room.terminal.storeCapacity){
+        	    const mineral = creep.room.controller.pos.findClosestByRange(FIND_MINERALS);
+				if(mineral && (creep.room.terminal.store[mineral.mineralType]==undefined || creep.room.terminal.store[mineral.mineralType]<1000000)){
+					target = creep.room.terminal;
+				}
+				else{
+				    target = creep.room.storage;
+				}
+        	}
         	else{
         		target = creep.room.storage;
         	}
