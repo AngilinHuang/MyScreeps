@@ -4,7 +4,7 @@ var creepUtil = require('creepUtil');
 /*
  * repairer功能
  * 工作优先级
- * 1、如果creep携带了非能量资源，将资源交给storage，没有storage则交给最近的container
+ * 1、如果creep携带了非能量资源，将资源交给terminal，没有terminal则交给storage，没有storage则交给最近的container
  * 2、修理除了墙和rampart以外的血量不满70%的建筑到满血
  * 3、修理墙和rampart的血量到wallHitsLimit（最低100K，随着room controller等级的提高而提高）
  * 4、为spawn，extension，tower供能
@@ -50,9 +50,12 @@ var roleRepairer = {
         }
 
         if(creep.memory.repairing) {
-        	//如果拾取了矿物资源，交给storage，如果没有storage则交给最近的container
+        	//如果拾取了矿物资源，交给terminal，如果没有terminal则交给storage，如果没有storage则交给最近的container
         	if(_.sum(creep.carry)!=creep.carry.energy){
         		let target = creep.room.storage;
+        		if(creep.room.terminal){
+        			target = creep.room.terminal;
+        		}
         		if(!target){
         			target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                         filter: (structure) => {
