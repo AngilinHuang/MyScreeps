@@ -53,7 +53,7 @@ var roleRepairer = {
         	//如果拾取了矿物资源，交给terminal，如果没有terminal则交给storage，如果没有storage则交给最近的container
         	if(_.sum(creep.carry)!=creep.carry.energy){
         		let target = creep.room.storage;
-        		if(creep.room.terminal){
+        		if(creep.room.terminal && _.sum(creep.room.terminal.store)<creep.room.terminal.storeCapacity){
         			target = creep.room.terminal;
         		}
         		if(!target){
