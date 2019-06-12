@@ -75,7 +75,7 @@ var creepUtil = {
 	getEnergyFromClosestStructure: function(creep){
 		const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_LINK && structure.energy >0)
+                return (structure.structureType == STRUCTURE_LINK && structure.energy >450)
                 	||(structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
                     ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
                     ;
@@ -305,12 +305,13 @@ var creepUtil = {
             filter: (structure) => {
                 return ((structure.structureType == STRUCTURE_EXTENSION 
                 		|| structure.structureType == STRUCTURE_SPAWN
-                		|| structure.structureType == STRUCTURE_LAB) &&
+                		|| structure.structureType == STRUCTURE_LAB
+                		|| structure.structureType == STRUCTURE_NUKER) &&
                 		structure.energy < structure.energyCapacity)
                     || (structure.structureType == STRUCTURE_TOWER &&
                     		structure.energy < 800)
                     || (structure.structureType == STRUCTURE_TERMINAL &&
-                    		structure.store[RESOURCE_ENERGY] < 10000)
+                    		structure.store[RESOURCE_ENERGY] < 30000)
                     ;
 	            }
 	    });

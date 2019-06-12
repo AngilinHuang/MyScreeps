@@ -45,8 +45,8 @@ var roleRepairer = {
         	wallHitsLimit = 1000000;
         }
         else if(creep.room.controller.level==8){
-        	//10M
-        	wallHitsLimit = 10000000;
+        	//15M
+        	wallHitsLimit = 15000000;
         }
 
         if(creep.memory.repairing) {
