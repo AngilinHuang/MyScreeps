@@ -4,7 +4,8 @@ var creepUtil = require('creepUtil');
  * extracter功能
  * 工作优先级
  * 1、如果2格内有container，将矿物放入该建筑
- * 2、将矿物放入storage
+ * 2、将矿物放入terminal，直到该矿物有100K
+ * 3、将矿物放入storage
  * 采集优先级
  * 1、从2格内有矿物资源的tombstone获取矿物
  * 2、从当前房间内mineral采集
@@ -64,7 +65,7 @@ var roleExtracter = {
         	}
         	else if(creep.room.terminal && _.sum(creep.room.terminal.store)<creep.room.terminal.storeCapacity){
         	    const mineral = creep.room.controller.pos.findClosestByRange(FIND_MINERALS);
-				if(mineral && (creep.room.terminal.store[mineral.mineralType]==undefined || creep.room.terminal.store[mineral.mineralType]<1000000)){
+				if(mineral && (creep.room.terminal.store[mineral.mineralType]==undefined || creep.room.terminal.store[mineral.mineralType]<100000)){
 					target = creep.room.terminal;
 				}
 				else{
