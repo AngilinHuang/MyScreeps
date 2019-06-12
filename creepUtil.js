@@ -75,7 +75,7 @@ var creepUtil = {
 	getEnergyFromClosestStructure: function(creep){
 		const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_LINK && structure.energy >450)
+                return (structure.structureType == STRUCTURE_LINK && structure.energy >150)
                 	||(structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
                     ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
                     ;
@@ -123,6 +123,11 @@ var creepUtil = {
 		ERR_NOT_IN_RANGE	-9	The target is too far away.	
 	 */
 	harvestTombstone: function(creep){
+	    //如果当前房间正在受到进攻，跳过该功能
+	    const threatLevel = creep.room.memory.threatLevel;
+	    if(threatLevel!=undefined && threatLevel>0){
+	        return false;
+	    }
 		const tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES);
 		if(tombstone &&  _.sum(tombstone.store)>0){
 			if(_.sum(tombstone.store) == tombstone.store[RESOURCE_ENERGY]){
@@ -183,6 +188,11 @@ var creepUtil = {
 	},
 	//从3格内的有能量的墓碑获取能量（适用于所有使用能量的工人）
 	harvestNearbyTombstone: function(creep){
+	    //如果当前房间正在受到进攻，跳过该功能
+	    const threatLevel = creep.room.memory.threatLevel;
+	    if(threatLevel!=undefined && threatLevel>0){
+	        return false;
+	    }
 		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 3);
 		if(tombstones.length>0 && tombstones[0].store[RESOURCE_ENERGY]>0){
 			const returnValue = creep.withdraw(tombstones[0], RESOURCE_ENERGY);
