@@ -47,7 +47,7 @@ var creepUtil = {
     },
 	
     /**
-     * 采集最近的资源，FIND_SOURCES_ACTIVE 比 FIND_SOURCES 多了条件 {filter: (source) => source.energy>0}
+     * 采集最近的资源，FIND_SOURCES_ACTIVE 比 FIND_SOURCES 多了条件 {filter: (source) => source.store[RESOURCE_ENERGY]>0}
      * 
      * harvest returnValue
 	    ERR_NOT_OWNER	-1	You are not the owner of this creep, or the room controller is owned or reserved by another player.
@@ -75,7 +75,7 @@ var creepUtil = {
 	getEnergyFromClosestStructure: function(creep){
 		const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_LINK && structure.energy >150)
+                return (structure.structureType == STRUCTURE_LINK && structure.store[RESOURCE_ENERGY] >150)
                 	||(structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY]>0)
                     ||(structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY]>0)
                     ;
@@ -129,8 +129,8 @@ var creepUtil = {
 	        return false;
 	    }
 		const tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES);
-		if(tombstone &&  _.sum(tombstone.store)>0){
-			if(_.sum(tombstone.store) == tombstone.store[RESOURCE_ENERGY]){
+		if(tombstone &&  tombstone.store.getUsedCapacity()>0){
+			if(tombstone.store.getUsedCapacity() == tombstone.store[RESOURCE_ENERGY]){
 				const returnValue = creep.withdraw(tombstone, RESOURCE_ENERGY);
 				if(returnValue == ERR_NOT_IN_RANGE) {
 				    creep.moveTo(tombstone);
@@ -233,7 +233,7 @@ var creepUtil = {
 	//掉落的矿物资源无法pickup，报-7错误
 	harvestNearbyMineralTombstone: function(creep){
 		const tombstones = creep.pos.findInRange(FIND_TOMBSTONES, 2);
-		if(tombstones.length>0 && _.sum(tombstones[0].store)>0 && tombstones[0].store[RESOURCE_ENERGY]!=_.sum(tombstones[0].store)){
+		if(tombstones.length>0 && tombstones[0].store.getUsedCapacity()>0 && tombstones[0].store[RESOURCE_ENERGY]!=tombstones[0].store.getUsedCapacity()){
 			for(let resourceType in tombstones[0].store) {
 				if(resourceType!=RESOURCE_ENERGY){
 					if(creep.withdraw(tombstones[0], resourceType) == ERR_NOT_IN_RANGE) {
@@ -246,7 +246,7 @@ var creepUtil = {
 		}
 		else{
 			const droppedResources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 2);
-			if(droppedResources.length>0 && droppedResources[0].energy==0) {
+			if(droppedResources.length>0 && droppedResources[0].store[RESOURCE_ENERGY]==0) {
 				const returnValue = creep.pickup(droppedResources[0]);
 			    if(returnValue == ERR_NOT_IN_RANGE) {
 			        creep.moveTo(droppedResources[0]);
@@ -309,17 +309,18 @@ var creepUtil = {
             }
     	}
     },
-    //为spawn和extension和tower和lab供能，terminal保证10K能量储备
+    //为spawn和extension和tower和lab和powerBank供能，terminal保证10K能量储备
     transferEnergyToFunctionalStructure: function(creep){
     	const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 return ((structure.structureType == STRUCTURE_EXTENSION 
                 		|| structure.structureType == STRUCTURE_SPAWN
                 		|| structure.structureType == STRUCTURE_LAB
-                		|| structure.structureType == STRUCTURE_NUKER) &&
-                		structure.energy < structure.energyCapacity)
+                		|| structure.structureType == STRUCTURE_NUKER
+                		|| structure.structureType == STRUCTURE_POWER_SPAWN) &&
+                		structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY))
                     || (structure.structureType == STRUCTURE_TOWER &&
-                    		structure.energy < 800)
+                    		structure.store[RESOURCE_ENERGY] < 800)
                     || (structure.structureType == STRUCTURE_TERMINAL &&
                     		structure.store[RESOURCE_ENERGY] < 30000)
                     ;
@@ -342,9 +343,9 @@ var creepUtil = {
             filter: (structure) => {
                 return ((structure.structureType == STRUCTURE_EXTENSION 
                 		|| structure.structureType == STRUCTURE_SPAWN) &&
-                		structure.energy < structure.energyCapacity)
+                		structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY))
                     || (structure.structureType == STRUCTURE_TOWER &&
-                    		structure.energy < 800)
+                    		structure.store[RESOURCE_ENERGY] < 800)
                     ;
 	            }
 	    });

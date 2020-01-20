@@ -11,8 +11,18 @@ var creepUtil = require('creepUtil');
  * 
  * 
  * 可以作为probe使用
- * Game.spawns['Spawn2'].spawnCreep([MOVE],'Probe'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: 'E28S26', room:'E28S26' ,passThroughRoom:'E30S27'} } )
- *    
+ * Game.spawns['Spawn4'].spawnCreep([MOVE],'Probe'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: 'E26S28', room:'E26S28',passThroughRoom:'E27S28' }});
+ * Game.spawns['Spawn4'].spawnCreep([CARRY,MOVE],'Probe'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: 'E26S27', room:'E26S27',passThroughRoom:'E27S27' }});  
+ * 
+ * 
+ * Game.getObjectById('5d05d5ae871b2131d3a5dfc3').memory.role='';
+ * Game.getObjectById('5d05d5ae871b2131d3a5dfc3').moveByPath(Game.getObjectById('5d05d5ae871b2131d3a5dfc3').pos.findPathTo(Game.getObjectById('5ce3fbf59fe4da5efbcf9bf2')));
+ * 
+ * Game.getObjectById('5d05d5ae871b2131d3a5dfc3').withdraw(Game.getObjectById('5ce3fbf59fe4da5efbcf9bf2'), RESOURCE_ENERGY)
+ * Game.getObjectById('5d05d5ae871b2131d3a5dfc3').moveTo(new RoomPosition(22,7, 'E27S27'));
+ *  
+ *  
+ *  5ce16ef9cd8deb5a978cea5d
  */
 var roleOutsourcing = {
     run: function(creep) {

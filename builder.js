@@ -20,10 +20,10 @@ var roleBuilder = {
     		return;
     	}
     	
-        if(creep.memory.building && creep.carry.energy == 0) {
+        if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.building = false;
         }
-        if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.building && creep.store[RESOURCE_ENERGY] == creep.store.getCapacity()) {
             creep.memory.building = true;
         }
 

@@ -4,9 +4,28 @@ var creepUtil = require('creepUtil');
 /*
  * carrier功能
  * 可以跨房间运输
- * Game.spawns['Spawn1'].spawnCreep( [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE],'Carry'+Game.time,{ memory: { role: 'carrier'
-   , transportList: [{id:'',oper:0},{id:'',oper:1}]} } );
-   oper=0取货，oper=1存货
+ * 0取货 1存货
+ * 
+ *探针
+ *Game.spawns['Spawn4'].spawnCreep([MOVE],'Probe'+Game.time,{ memory: { role:'outsourcing' ,targetRole: 'builder', target: 'E26S27', room:'E26S27'}});
+ *
+ *防御
+ *Game.spawns['Spawn13'].spawnCreep( [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,HEAL,HEAL,HEAL,HEAL,HEAL],'Melee'+Game.time,{ memory: { role: 'meleeAttacker', target: 'E26S26'} });
+ *
+ * 
+ *  
+ * 5cdfe108cd8deb5a978c7cba,0,H;5cdfe108cd8deb5a978c7cba,0,U;5ce16ef9cd8deb5a978cea5d,1,H;5ce16ef9cd8deb5a978cea5d,1,U;5ce16ef9cd8deb5a978cea5d,1,energy
+ * 5cdfe108cd8deb5a978c7cba,0,O;5cdfe108cd8deb5a978c7cba,0,Z;5ce16ef9cd8deb5a978cea5d,1,O;5ce16ef9cd8deb5a978cea5d,1,Z;5ce16ef9cd8deb5a978cea5d,1,energy
+ * 
+ * 5ce3fbf59fe4da5efbcf9bf2,0,XKHO2;5ce3fbf59fe4da5efbcf9bf2,0,XLHO2;5ce3fbf59fe4da5efbcf9bf2,0,H;5ce16ef9cd8deb5a978cea5d,1,XKHO2;5ce16ef9cd8deb5a978cea5d,1,XLHO2;5ce16ef9cd8deb5a978cea5d,1,H;5ce16ef9cd8deb5a978cea5d,1,energy
+ * 
+ * Game.getObjectById('5d05db74c7719631f0b6cf54').memory.transportList='5ce3fbf59fe4da5efbcf9bf2,0,GO;5ce3fbf59fe4da5efbcf9bf2,0,UH;5ce3fbf59fe4da5efbcf9bf2,0,H;5ce16ef9cd8deb5a978cea5d,1,GO;5ce16ef9cd8deb5a978cea5d,1,UH;5ce16ef9cd8deb5a978cea5d,1,H;5ce16ef9cd8deb5a978cea5d,1,energy'
+ * Game.getObjectById('5d05de47c889b0336d18a48d').memory.transportList='5ce3fbf59fe4da5efbcf9bf2,0,GHO2;5ce3fbf59fe4da5efbcf9bf2,0,ZHO2;5ce3fbf59fe4da5efbcf9bf2,0,H;5ce16ef9cd8deb5a978cea5d,1,H;5ce16ef9cd8deb5a978cea5d,1,GHO2;5ce16ef9cd8deb5a978cea5d,1,ZHO2;5ce16ef9cd8deb5a978cea5d,1,energy'
+ * Game.getObjectById('5d05de700765293387d921ec').memory.transportList='5ce3fbf59fe4da5efbcf9bf2,0,KHO2;5ce3fbf59fe4da5efbcf9bf2,0,UH2O;5ce3fbf59fe4da5efbcf9bf2,0,H;5ce16ef9cd8deb5a978cea5d,1,KHO2;5ce16ef9cd8deb5a978cea5d,1,UH2O;5ce16ef9cd8deb5a978cea5d,1,H;5ce16ef9cd8deb5a978cea5d,1,energy'
+ *
+ *
+ * 
+ * 
  */
 var roleCarrier = {
     run: function(creep) {
@@ -32,7 +51,7 @@ var roleCarrier = {
         		if(oper==0){
         		    //console.log(creep.name+' target='+targetObj.id);
         			//如果当前creep容量满，跳过所有取货动作
-        			if(_.sum(creep.carry)==creep.carryCapacity){
+        			if(creep.store.getUsedCapacity()==creep.store.getCapacity()){
         				transportArray.push(target);
         		    	creep.memory.transportList= transportArray.join(";");
         		    	return;
@@ -54,7 +73,7 @@ var roleCarrier = {
         		}
         		else if(oper==1){
         			//如果当前creep没有携带资源，跳过所有存货动作
-        			if(_.sum(creep.carry)==0){
+        			if(creep.store.getUsedCapacity()==0){
         				transportArray.push(target);
         		    	creep.memory.transportList= transportArray.join(";");
         		    	return;

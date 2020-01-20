@@ -27,10 +27,10 @@ var roleExtracter = {
     		return;
     	}
     	
-    	if(creep.memory.opt && _.sum(creep.carry) == 0) {
+    	if(creep.memory.opt && creep.store.getUsedCapacity() == 0) {
             creep.memory.opt = false;
         }
-        if(!creep.memory.opt && _.sum(creep.carry) == creep.carryCapacity) {
+        if(!creep.memory.opt && creep.store.getUsedCapacity() == creep.store.getCapacity()) {
             creep.memory.opt = true;
         }
     	
@@ -57,13 +57,13 @@ var roleExtracter = {
         	let targets = creep.pos.findInRange(FIND_STRUCTURES, 1, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_CONTAINER &&
-                        	_.sum(structure.store)<structure.storeCapacity);
+                    		creep.store.getUsedCapacity()<structure.store.getCapacity());
                 }
         	});
         	if(targets && targets.length>0){
         		target = targets[0];
         	}
-        	else if(creep.room.terminal && _.sum(creep.room.terminal.store)<creep.room.terminal.storeCapacity){
+        	else if(creep.room.terminal && creep.room.terminal.store.getUsedCapacity()<creep.room.terminal.store.getCapacity()){
         	    const mineral = creep.room.controller.pos.findClosestByRange(FIND_MINERALS);
 				if(mineral && (creep.room.terminal.store[mineral.mineralType]==undefined || creep.room.terminal.store[mineral.mineralType]<100000)){
 					target = creep.room.terminal;
@@ -76,7 +76,7 @@ var roleExtracter = {
         		target = creep.room.storage;
         	}
             if(target) {
-            	for(let resourceType in creep.carry) {
+            	for(let resourceType in creep.store) {
             		if(creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                         return;

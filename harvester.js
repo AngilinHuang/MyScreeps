@@ -19,10 +19,10 @@ var roleHarvester = {
     		return;
     	}
     	
-    	if(creep.memory.opt && creep.carry.energy == 0) {
+    	if(creep.memory.opt && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.opt = false;
         }
-        if(!creep.memory.opt && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.opt && creep.store[RESOURCE_ENERGY] == creep.store.getCapacity()) {
             creep.memory.opt = true;
         }
     	
@@ -47,17 +47,17 @@ var roleHarvester = {
         	let targets = creep.pos.findInRange(FIND_STRUCTURES, 1, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_LINK &&
-                        structure.energy < structure.energyCapacity);
+                        structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY));
                 }
         	});
         	if(!targets||targets.length==0){
         		targets = creep.pos.findInRange(FIND_STRUCTURES, 2, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_LINK &&
-                            structure.energy < structure.energyCapacity)
+                            structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY))
                             ||(structure.structureType == STRUCTURE_STORAGE)
                             ||(structure.structureType == STRUCTURE_CONTAINER &&
-                                	_.sum(structure.store)<structure.storeCapacity);
+                            		creep.store.getUsedCapacity()<structure.store.getCapacity());
                     }
             	});
         	}
@@ -70,12 +70,12 @@ var roleHarvester = {
                         return ((structure.structureType == STRUCTURE_EXTENSION 
                         		|| structure.structureType == STRUCTURE_SPAWN
                         		|| structure.structureType == STRUCTURE_TOWER) &&
-                            structure.energy < structure.energyCapacity)
+                        		structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY))
                             || structure.structureType == STRUCTURE_STORAGE
                             || (structure.structureType == STRUCTURE_CONTAINER &&
-                            		_.sum(structure.store)<structure.storeCapacity)
+                            		creep.store.getUsedCapacity()<structure.store.getCapacity())
                             ||(structure.structureType == STRUCTURE_LINK &&
-                                    structure.energy < structure.energyCapacity);
+                            		structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY));
                     }
         		});
         	}

@@ -7,7 +7,7 @@ var creepUtil = require('creepUtil');
  * 
  * claim功能
  * 如果该controller已被其他玩家占有，则会使用attackController直到能够claim
- * Game.spawns['Spawn1'].spawnCreep( [CLAIM,MOVE],'Claimer'+Game.time,{ memory: { role: 'claimer', target: 'W14S18',oper:'claim' } } );
+ * Game.spawns['Spawn4'].spawnCreep( [CLAIM,MOVE],'Claimer'+Game.time,{ memory: { role: 'claimer', target: 'E26S28',oper:'claim',passThroughRoom:'E27S28' } } );
  * 
  * 
  * reserve功能

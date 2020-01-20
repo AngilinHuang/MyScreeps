@@ -23,10 +23,10 @@ var roleRepairer = {
     		return;
     	}
     	
-        if(creep.memory.repairing && _.sum(creep.carry) == 0) {
+        if(creep.memory.repairing && creep.store.getUsedCapacity() == 0) {
             creep.memory.repairing = false;
         }
-        if(!creep.memory.repairing && _.sum(creep.carry) == creep.carryCapacity) {
+        if(!creep.memory.repairing && creep.store.getUsedCapacity() == creep.store.getCapacity()) {
             creep.memory.repairing = true;
         }
         //console.log(creep.name+' creep.memory.repairing is '+creep.memory.repairing);
@@ -35,37 +35,37 @@ var roleRepairer = {
         let wallHitsLimit = 100000;
         //rampartMaxHit:level4=3000000;level5=10000000;level6=30000000;level7=100000000;level8=300000000;
         if(creep.room.controller.level==5){
-        	wallHitsLimit = 100000;
-        }
-        else if(creep.room.controller.level==6){
         	wallHitsLimit = 500000;
         }
+        else if(creep.room.controller.level==6){
+        	wallHitsLimit = 1500000;
+        }
         else if(creep.room.controller.level==7){
-        	//1M，期望8M，剩余部分靠wallRepairer补足
-        	wallHitsLimit = 1000000;
+        	//3M，期望8M，剩余部分靠wallRepairer补足
+        	wallHitsLimit = 3000000;
         }
         else if(creep.room.controller.level==8){
-        	//15M
-        	wallHitsLimit = 15000000;
+        	//11M
+        	wallHitsLimit = 11000000;
         }
 
         if(creep.memory.repairing) {
         	//如果拾取了矿物资源，交给terminal，如果没有terminal则交给storage，如果没有storage则交给最近的container
-        	if(_.sum(creep.carry)!=creep.carry.energy){
+        	if(creep.store.getUsedCapacity()!=creep.store[RESOURCE_ENERGY]){
         		let target = creep.room.storage;
-        		if(creep.room.terminal && _.sum(creep.room.terminal.store)<creep.room.terminal.storeCapacity){
+        		if(creep.room.terminal && creep.room.terminal.store.getUsedCapacity()<creep.room.terminal.store.getCapacity()){
         			target = creep.room.terminal;
         		}
         		if(!target){
         			target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                         filter: (structure) => {
                             return (structure.structureType == STRUCTURE_CONTAINER &&
-                                	_.sum(structure.store)<structure.storeCapacity);
+                                	structure.store.getUsedCapacity()<structure.store.getCapacity());
                         }
                 	});
         		}
                 if(target) {
-                	for(let resourceType in creep.carry) {
+                	for(let resourceType in creep.store) {
                 		if(creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});                          
                         }
@@ -82,7 +82,7 @@ var roleRepairer = {
         		const memoryTarget = Game.getObjectById(targetId);
         		if((memoryTarget.hits < memoryTarget.hitsMax
         			&& memoryTarget.structureType!=STRUCTURE_RAMPART && memoryTarget.structureType!=STRUCTURE_WALL)
-        			||(memoryTarget.hits < (wallHitsLimit+10000)
+        			||(memoryTarget.hits < (wallHitsLimit+100000)
         			&& memoryTarget.structureType==STRUCTURE_RAMPART)){
         			target = Game.getObjectById(targetId);
         		}
@@ -121,6 +121,8 @@ var roleRepairer = {
             }
         }
         else {
+            //harvestNearbyTombstone
+            //harvestTombstone
         	if(!creepUtil.harvestTombstone(creep)){
 	        	if(!creepUtil.getEnergyFromClosestStructure(creep)){
 	        		creepUtil.harvestClosestEnergy(creep);

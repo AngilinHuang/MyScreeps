@@ -18,10 +18,10 @@ var roleUpgrader = {
     		return;
     	}
     	
-        if(creep.memory.upgrader && creep.carry.energy == 0) {
+        if(creep.memory.upgrader && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.upgrader = false;
         }
-        if(!creep.memory.upgrader && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.upgrader && creep.store[RESOURCE_ENERGY] == creep.store.getCapacity()) {
             creep.memory.upgrader = true;
         }
 

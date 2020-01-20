@@ -19,10 +19,10 @@ var roleWarCharger = {
     		return;
     	}
     	
-        if(creep.memory.charging && creep.carry.energy == 0) {
+        if(creep.memory.charging && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.charging = false;
         }
-        if(!creep.memory.charging && creep.carry.energy == creep.carryCapacity) {
+        if(!creep.memory.charging && creep.store[RESOURCE_ENERGY] == creep.store.getCapacity()) {
             creep.memory.charging = true;
         }
 
@@ -31,7 +31,7 @@ var roleWarCharger = {
         	let targetId = creep.memory.targetId;
         	if(targetId){
         		const memoryTarget = Game.getObjectById(targetId);
-        		if(memoryTarget && structure.energy < structure.energyCapacity){
+        		if(memoryTarget && structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY)){
         			target = memoryTarget;
         		}
         		else{
@@ -47,9 +47,9 @@ var roleWarCharger = {
                     filter: (structure) => {
                         return ((structure.structureType == STRUCTURE_EXTENSION 
                         		|| structure.structureType == STRUCTURE_SPAWN) &&
-                        		structure.energy < structure.energyCapacity)
+                        		structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY))
                             || (structure.structureType == STRUCTURE_TOWER &&
-                            		structure.energy < 800)
+                            		structure.store[RESOURCE_ENERGY] < 800)
                             ;
         	            }
         	    });
